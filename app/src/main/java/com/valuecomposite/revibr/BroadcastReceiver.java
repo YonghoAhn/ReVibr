@@ -1,0 +1,111 @@
+package com.valuecomposite.revibr;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.telephony.SmsManager;
+import android.telephony.SmsMessage;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Date;
+
+/**
+ * Created by ayh07 on 8/10/2017.
+ */
+
+public class BroadcastReceiver extends android.content.BroadcastReceiver {
+
+    PhoneBookItem phoneBookItem;
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        Bundle bundle = intent.getExtras();
+        String action = intent.getAction();
+        if(action.equals("android.provider.Telephony.SMS_RECEIVED"))
+        {
+            Object messages[] = (Object[])bundle.get("pdus");
+            SmsMessage smsMessage[] = new SmsMessage[messages.length];
+            for(int i = 0;i<messages.length;i++)
+            {
+                smsMessage[i] = SmsMessage.createFromPdu((byte[])messages[i]);
+            }
+
+            //SMS 수신 시간간
+            Date curDate = new Date(smsMessage[0].getTimestampMillis());
+            String time = curDate.toString();
+
+            //SMS 수신 번호
+            String number = smsMessage[0].getOriginatingAddress();
+
+            //SMS 수신 번호가 등록된 사람인가?
+            String person = "";
+            for(int i = 0; i< DataManager.PBItems.size();i++)
+            {
+                if(DataManager.PBItems.get(i).getPhoneNum().equals(number))
+                {
+                    person = DataManager.PBItems.get(i).getDisplayName();
+                }
+                else
+                {
+                    person = "모르는 번호";
+                }
+            }
+
+            //SMS 수신 메세지
+            String message = smsMessage[0].getMessageBody().toString();
+        }
+        else if(action.equals(Intent.ACTION_HEADSET_PLUG))
+        {
+            int state = intent.getIntExtra("state", -1);
+            if(state == 1) //Earphone attached
+            {
+                DataManager.IsEarphoneConnected = true;
+            }
+            else //Earphone dettached
+            {
+                DataManager.IsEarphoneConnected = false;
+            }
+        }
+        else if (action.equals("SMS_SENT_ACTION")) {
+            switch (getResultCode()) {
+                case Activity.RESULT_OK:
+                    // 전송 성공
+                    Toast.makeText(context, "전송 완료", Toast.LENGTH_SHORT).show();
+                    break;
+                case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
+                    // 전송 실패
+                    Toast.makeText(context, "전송 실패", Toast.LENGTH_SHORT).show();
+                    break;
+                case SmsManager.RESULT_ERROR_NO_SERVICE:
+                    // 서비스 지역 아님
+                    Toast.makeText(context, "서비스 지역이 아닙니다", Toast.LENGTH_SHORT).show();
+                    break;
+                case SmsManager.RESULT_ERROR_RADIO_OFF:
+                    // 무선 꺼짐
+                    Toast.makeText(context, "무선(Radio)가 꺼져있습니다", Toast.LENGTH_SHORT).show();
+                    break;
+                case SmsManager.RESULT_ERROR_NULL_PDU:
+                    // PDU 실패
+                    Toast.makeText(context, "PDU Null", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        } else if (action.equals("SMS_DELIVERED_ACTION")) {
+            switch (getResultCode()) {
+                case Activity.RESULT_OK:
+                    // 도착 완료
+                    Toast.makeText(context, "SMS 도착 완료", Toast.LENGTH_SHORT).show();
+                    Intent scActivity = new Intent(context, ReceiveActivity.class);
+                    context.startActivity(scActivity);
+                    break;
+                case Activity.RESULT_CANCELED:
+                    // 도착 안됨
+                    Toast.makeText(context, "SMS 도착 실패", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }else{
+
+        }
+    }
+}

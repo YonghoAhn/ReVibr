@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="16dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="16dp"
+    >
+        <TextView
+            android:padding="5dp"
+            android:id="@+id/txtSend"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/roundtext"
+            android:hint="SMS MESSAGE" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:padding="5dp"
+            android:background="@drawable/roundtext"
+            android:id="@+id/count_braille"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="braille" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="2">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_margin="10dp"
+                    android:background="@drawable/roundtext"
+                    android:id="@+id/index_one"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"></TextView>
+
+                <TextView
+                    android:layout_margin="10dp"
+                    android:background="@drawable/roundtext"
+                    android:id="@+id/index_two"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"></TextView>
+
+                <TextView
+                    android:layout_margin="10dp"
+                    android:background="@drawable/roundtext"
+                    android:id="@+id/index_three"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"></TextView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_margin="10dp"
+                    android:background="@drawable/roundtext"
+                    android:id="@+id/index_four"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"></TextView>
+
+                <TextView
+                    android:layout_margin="10dp"
+                    android:background="@drawable/roundtext"
+                    android:id="@+id/index_five"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"></TextView>
+
+                <TextView
+                    android:layout_margin="10dp"
+                    android:background="@drawable/roundtext"
+                    android:id="@+id/index_six"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"></TextView>
+            </LinearLayout>
+        </LinearLayout>
+</LinearLayout>
+</layout>
