@@ -24,7 +24,7 @@
         <TextView
             android:padding="5dp"
             android:background="@drawable/roundtext"
-            android:id="@+id/count_braille"
+            android:id="@+id/count"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="braille" />
@@ -44,7 +44,7 @@
                 <TextView
                     android:layout_margin="10dp"
                     android:background="@drawable/roundtext"
-                    android:id="@+id/index_one"
+                    android:id="@+id/idx_one"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"></TextView>
@@ -52,7 +52,7 @@
                 <TextView
                     android:layout_margin="10dp"
                     android:background="@drawable/roundtext"
-                    android:id="@+id/index_two"
+                    android:id="@+id/idx_two"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"></TextView>
@@ -60,7 +60,7 @@
                 <TextView
                     android:layout_margin="10dp"
                     android:background="@drawable/roundtext"
-                    android:id="@+id/index_three"
+                    android:id="@+id/idx_three"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"></TextView>
@@ -76,7 +76,7 @@
                 <TextView
                     android:layout_margin="10dp"
                     android:background="@drawable/roundtext"
-                    android:id="@+id/index_four"
+                    android:id="@+id/idx_four"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"></TextView>
@@ -84,7 +84,7 @@
                 <TextView
                     android:layout_margin="10dp"
                     android:background="@drawable/roundtext"
-                    android:id="@+id/index_five"
+                    android:id="@+id/idx_five"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"></TextView>
@@ -92,7 +92,7 @@
                 <TextView
                     android:layout_margin="10dp"
                     android:background="@drawable/roundtext"
-                    android:id="@+id/index_six"
+                    android:id="@+id/idx_six"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"></TextView>

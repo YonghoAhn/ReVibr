@@ -96,6 +96,13 @@ public class BrailleInput {
     public static void flush()
     {
         //모든 state를 초기화하는 메서드
+        m_Flag = FLAG.STATE_EMPTY;
+        chosung = ' ';
+        jongsung = ' ';
+        joongsung = ' ';
+        IsDoubleChosung = false;
+        Braille = "";
+        SendActivity.AddText(CompositionResult);
     }
 
     //비어있을 경우
@@ -122,6 +129,7 @@ public class BrailleInput {
             if(IsDoubleChosung)
             {
                 chosung = 'ㅆ';
+                SendActivity.AddChosung("ㅆ");
                 m_Flag = FLAG.STATE_HANGUL_CHOSUNG;
             }
             else
@@ -175,22 +183,31 @@ public class BrailleInput {
             chosung = c;
             m_Flag = FLAG.STATE_HANGUL_CHOSUNG;
         }
+        String s = chosung + "";
+        SendActivity.AddText(s);
         return true;
     }
 
     public static boolean case_joongsung(String Braille)
     {
-        if(IsDoubleChosung)
-            chosung = 'ㅅ';
+
         if(chosung == ' ')
-            chosung = 'ㅇ';
+        {
+            if(IsDoubleChosung)
+            {
+                chosung = 'ㅅ';
+                SendActivity.AddChosung("ㅅ");
+            }
+            else
+                chosung = 'ㅇ';
+        }
 
         int pos = BC.getHangulPosition(Braille);
         if(pos != 2) //중성이 아닌 경우
         {
             if(pos == 1) //초성일 경우
             {
-
+                case_chosung(Braille);
             }
             else if(pos == 3) //종성일 경우
             {
@@ -201,15 +218,14 @@ public class BrailleInput {
         char c = BC.getHangulCharacter(Braille);
         if(c == ' ')
             return false;
-        //이것들은 뒤에 뭐가 더 붙을수도 있다.
-
-            m_Flag = FLAG.STATE_HANGUL_JOONGSUNG;
-            joongsung = c;
-
+        m_Flag = FLAG.STATE_HANGUL_JOONGSUNG;
+        joongsung = c;
+        String s = "" + chosung + joongsung ;
+        SendActivity.AddText(s);
         return true;
     }
 
-    public static void case_jongsung(String Braille) {
+    public static boolean case_jongsung(String Braille) {
         int pos = BC.getHangulPosition(Braille);
         char c = BC.getHangulCharacter(Braille);
         if (c == 'ㅐ') //중성이 입력되었다면
@@ -228,12 +244,20 @@ public class BrailleInput {
                     joongsung = 'ㅞ';
                     break;
             }
+            return true;
         }
         m_Flag = FLAG.STATE_HANGUL_JONGSUNG;
         if(jongsung != ' ') //이미 종성이 있다면
         {
             tryCreateMultipleJongsung(Braille);
         }
+        else
+        {
+            jongsung = c;
+        }
+        String s = "" +  chosung + joongsung + jongsung ;
+        SendActivity.AddText(s);
+        return true;
     }
 
 
@@ -245,6 +269,8 @@ public class BrailleInput {
         else
         {
             CompositionResult += c; //추가
+            String s = ""+c;
+            SendActivity.AddChosung(s);
             return true;
         }
     }
@@ -257,6 +283,8 @@ public class BrailleInput {
         else
         {
             CompositionResult += c; //추가
+            String s = ""+c;
+            SendActivity.AddChosung(s);
             return true;
         }
     }
