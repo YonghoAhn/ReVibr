@@ -27,4 +27,9 @@ public class Vibrator {
     }
 
     //진동을 울리는데, 경우의 수가 여러 가지가 있다.
+
+    public void vibrate(int millisecond, int type)
+    {
+
+    }
 }

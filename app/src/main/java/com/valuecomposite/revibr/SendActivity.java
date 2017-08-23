@@ -3,6 +3,7 @@ package com.valuecomposite.revibr;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +28,7 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
     static ActivitySendBinding binding;
     private GestureDetectorCompat gDetector;
     private static String smsNum = "";
+    public static int count = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,25 +77,30 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
         if (Math.abs(e1.getX() - e2.getX()) < GESTURE_LIMIT && (e1.getY() - e2.getY() > ZERO)) {
             //위로 드래그
             Toast.makeText(mContext, "UP", Toast.LENGTH_SHORT).show();
+            colorIdentify(count,true);
             BrailleInput.Input(true);
         } else if (Math.abs(e1.getX() - e2.getX()) < GESTURE_LIMIT && (e2.getY() - e1.getY() > ZERO)) {
             //아래로 드래그
             Toast.makeText(mContext, "DOWN", Toast.LENGTH_SHORT).show();
+            colorIdentify(count,false);
             BrailleInput.Input(false);
         } else if (Math.abs(e1.getY() - e2.getY()) < GESTURE_LIMIT && (e1.getX() - e2.getX() > ZERO)) {
+            //왼쪽 드래그
+            Toast.makeText(mContext, "LEFT", Toast.LENGTH_SHORT).show();
+            // 지우기 코드
+            try {
+                binding.txtSend.setText(binding.txtSend.getText().toString().substring(0, binding.txtSend.getText().toString().length() - 1));
+            }
+            catch (Exception e)
+            {  }
+        } else if (Math.abs(e1.getY() - e2.getY()) < GESTURE_LIMIT && (e2.getX() - e1.getX() > ZERO)) {
             //오른쪽 드래그
             Toast.makeText(mContext, "RIGHT", Toast.LENGTH_SHORT).show();
             // 문자 보내기 코드
             sendSMS(binding.txtSend.getText().toString());
-        } else if (Math.abs(e1.getY() - e2.getY()) < GESTURE_LIMIT && (e2.getX() - e1.getX() > ZERO)) {
-            //왼쪽 드래그
-            Toast.makeText(mContext, "LEFT", Toast.LENGTH_SHORT).show();
-            // 지우기 코드
-            binding.txtSend.setText(binding.txtSend.getText().toString().substring(0,binding.txtSend.getText().toString().length()-1));
         } else if ((e2.getX() - e1.getX() > ZERO) && (e2.getY() - e1.getY() > ZERO)) {
             //오른쪽 아래 대각선 드래그
             //Toast.makeText(getApplicationContext(), "message sending activity", Toast.LENGTH_SHORT).show();
-
         } else if ((e1.getX() - e2.getX() > 0) && (e1.getY() - e2.getY() > 0)) {
             //왼쪽 위 대각선 드래그
             Toast.makeText(getApplicationContext(), "message sending activity", Toast.LENGTH_SHORT).show();
@@ -122,6 +129,8 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
         if(smsNum.length() > 0 && smsText.length() > 0)
         {
             sendSMS(smsNum, smsText);
+            binding.txtSend.setText("");
+            Toast.makeText(mContext,"전송됨",Toast.LENGTH_SHORT).show();
         }
         else
         {
@@ -134,5 +143,77 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
         PendingIntent deliverIntent = PendingIntent.getBroadcast(mContext,0,new Intent("SMS_DELIVERED_ACTION"),0);
         SmsManager mSmsManager = SmsManager.getDefault();
         mSmsManager.sendTextMessage(smsNum,null,smsText,sentIntent,deliverIntent);
+    }
+
+    public static void clearColor()
+    {
+        binding.idxOne.setBackgroundColor(Color.WHITE);
+        binding.idxTwo.setBackgroundColor(Color.WHITE);
+        binding.idxThree.setBackgroundColor(Color.WHITE);
+        binding.idxFour.setBackgroundColor(Color.WHITE);
+        binding.idxFive.setBackgroundColor(Color.WHITE);
+        binding.idxSix.setBackgroundColor(Color.WHITE);
+
+    }
+
+    private void colorIdentify(int idx, boolean gesture)
+    {
+        if(gesture) {
+            switch (idx) {
+                case 0:
+                    binding.idxOne.setBackgroundColor(Color.parseColor("#000000"));
+                    count++;
+                    break;
+                case 1:
+                    binding.idxTwo.setBackgroundColor(Color.parseColor("#000000"));
+                    count++;
+                    break;
+                case 2:
+                    binding.idxThree.setBackgroundColor(Color.parseColor("#000000"));
+                    count++;
+                    break;
+                case 3:
+                    binding.idxFour.setBackgroundColor(Color.parseColor("#000000"));
+                    count++;
+                    break;
+                case 4:
+                    binding.idxFive.setBackgroundColor(Color.parseColor("#000000"));
+                    count++;
+                    break;
+                case 5:
+                    binding.idxSix.setBackgroundColor(Color.parseColor("#000000"));
+                    count++;
+                    break;
+            }
+        }
+        else
+        {
+            switch (idx) {
+                case 0:
+                    binding.idxOne.setBackgroundColor(Color.parseColor("#eeeeee"));
+                    count++;
+                    break;
+                case 1:
+                    binding.idxTwo.setBackgroundColor(Color.parseColor("#eeeeee"));
+                    count++;
+                    break;
+                case 2:
+                    binding.idxThree.setBackgroundColor(Color.parseColor("#eeeeee"));
+                    count++;
+                    break;
+                case 3:
+                    binding.idxFour.setBackgroundColor(Color.parseColor("#eeeeee"));
+                    count++;
+                    break;
+                case 4:
+                    binding.idxFive.setBackgroundColor(Color.parseColor("#eeeeee"));
+                    count++;
+                    break;
+                case 5:
+                    binding.idxSix.setBackgroundColor(Color.parseColor("#eeeeee"));
+                    count++;
+                    break;
+            }
+        }
     }
 }
