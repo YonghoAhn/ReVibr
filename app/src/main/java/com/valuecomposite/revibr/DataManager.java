@@ -13,6 +13,8 @@ public class DataManager {
     public static ArrayList<PhoneBookItem> PBItems = new ArrayList<>();
     public static boolean IsEarphoneConnected = false;
     public static Context mContext;
+    public static ArrayList<SMSItem> SMSItems = new ArrayList<>();
+    public static SMSItem CurrentSMS = new SMSItem();
 
     //한글 초중종성 딕셔너리
     public static HashMap<String, Character> HANGUL_FIRST_SOUND = new HashMap<>();

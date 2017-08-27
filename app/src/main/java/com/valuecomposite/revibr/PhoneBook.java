@@ -155,8 +155,13 @@ public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGe
             getApplicationContext().startActivity(smsActivityIntent);
         } else if ((e1.getX() - e2.getX() > 0) && (e1.getY() - e2.getY() > 0)) {
             //왼쪽 위 대각선 드래그
-            Toast.makeText(getApplicationContext(), "message sending activity", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "message receiving activity", Toast.LENGTH_SHORT).show();
+            DataManager.CurrentSMS.setDisplayName("asdf");
+            DataManager.CurrentSMS.setTime("asdf");
+            DataManager.CurrentSMS.setBody("asfasfs");
+            DataManager.CurrentSMS.setPhoneNum("sfsafsafs");
             Intent scActivityIntent = new Intent(getApplicationContext(), ReceiveActivity.class);
+            scActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getApplicationContext().startActivity(scActivityIntent);
         } else {
             Toast.makeText(mContext, "nothing on gesture", Toast.LENGTH_SHORT).show();

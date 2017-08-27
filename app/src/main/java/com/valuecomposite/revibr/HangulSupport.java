@@ -22,6 +22,10 @@ public class HangulSupport {
             'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ',
             'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'
     };
+    private static final int BASECODE = 44032;
+    private static final int CHOSUNG = 588;
+    private static final int JUNGSUNG = 28;
+
 
     public static boolean IsHangul(char c)
     {
@@ -29,7 +33,7 @@ public class HangulSupport {
         {
             return false;
         }
-        return true;
+          return true;
     }
     //문자열 전체가 한글인지 판별
     public static boolean IsHangul(String s)
@@ -77,5 +81,18 @@ public class HangulSupport {
         char[] chars = new char[1];
         chars[0] = (char) (0xAC00 + (hindex[0]*21*28) + (hindex[1]*28) + hindex[2]);
         return chars[0];
+    }
+
+    public static char[] HangulAlphabet(char c)
+    {
+        char[] rt = new char[3];
+        int nTmp = c - BASECODE;
+        int c1 = nTmp/CHOSUNG;
+        int c2 = (nTmp - (CHOSUNG*c1)) / JUNGSUNG;
+        int c3 = (nTmp - (CHOSUNG*c1)-(JUNGSUNG*c2));
+        rt[0] = FirstSound[c1];
+        rt[1] = MiddleSound[c2];
+        rt[2] = LastSound[c3];
+        return rt;
     }
 }

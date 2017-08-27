@@ -55,6 +55,14 @@ public class BroadcastReceiver extends android.content.BroadcastReceiver {
 
             //SMS 수신 메세지
             String message = smsMessage[0].getMessageBody().toString();
+
+            Intent receiveIntent = new Intent(context, ReceiveActivity.class);
+            DataManager.CurrentSMS.setBody(message);
+            DataManager.CurrentSMS.setPhoneNum(number);
+            DataManager.CurrentSMS.setTime(time);
+            DataManager.CurrentSMS.setDisplayName(person);
+            receiveIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(receiveIntent);
         }
         else if(action.equals(Intent.ACTION_HEADSET_PLUG))
         {
