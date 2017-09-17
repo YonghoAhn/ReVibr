@@ -49,8 +49,8 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
     public void parseSMS(SMSItem smsItem)
     {
         display(smsItem.getTime(),smsItem.getDisplayName(),smsItem.getPhoneNum(),smsItem.getBody());
-//SMS를 진동으로 바꾸기만 하면 됨.
-//3개씩 끊어서 돌려주기?
+        //SMS를 진동으로 바꾸기만 하면 됨.
+        //3개씩 끊어서 돌려주기?
         char[] chars = smsItem.getBody().toCharArray();
         Log.d("MisakaMOE","Content : " + Character.toString(chars[0]));
         Log.d("MisakaMOE","Content : " + new String("" + chars[0]).matches(".*[a-z|A-Z]"));
@@ -182,10 +182,6 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
         }
     }
 
-    public boolean containsSpecialCharacter(String s) {
-        return (s == null) ? false : s.matches("[^A-Za-z0-9 ]");
-    }
-
     public void display(String time, String name, String number, String content)
     {
         binding.time.setText(time);
@@ -196,11 +192,49 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
 
     public static void onTouch() //터치
     {
-        if(count == 0)
+        if(DataManager.VibrateMode == 1) {
+            if (count == 0)
+                CurrentBraille = BrailleContent.get(count);
+            IsTouched = true;
+            binding.brailleText.setText(CurrentBraille);
+            parseBraille(false);
+        }
+        else if(DataManager.VibrateMode == 2)
+        {
             CurrentBraille = BrailleContent.get(count);
-        IsTouched = true;
-        binding.brailleText.setText(CurrentBraille);
-        parseBraille(false);
+            char[] a = CurrentBraille.toCharArray();
+            for(char c : a)
+            {
+                int tmp = (int)c;
+                if(tmp==0)
+                {
+                    vibrator.vibrate(300);
+                }
+                else
+                {
+                    vibrator.vibrate(100);
+                }
+            }
+            count++;
+        }
+        else
+        {
+            CurrentBraille = BrailleContent.get(count++)+BrailleContent.get(count);
+            char[] a = CurrentBraille.toCharArray();
+            for(char c : a)
+            {
+                int tmp = (int)c;
+                if(tmp==0)
+                {
+                    vibrator.vibrate(300);
+                }
+                else
+                {
+                    vibrator.vibrate(100);
+                }
+            }
+            count++;
+        }
     }
 
     public static void onFling() //쓸어내리기

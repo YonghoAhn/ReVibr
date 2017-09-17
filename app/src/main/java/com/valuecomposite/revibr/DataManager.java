@@ -15,7 +15,7 @@ public class DataManager {
     public static Context mContext;
     public static ArrayList<SMSItem> SMSItems = new ArrayList<>();
     public static SMSItem CurrentSMS = new SMSItem();
-
+    public static int VibrateMode = 0;
     //한글 초중종성 딕셔너리
     public static HashMap<String, Character> HANGUL_FIRST_SOUND = new HashMap<>();
     public static HashMap<String, Character> HANGUL_MIDDLE_SOUND = new HashMap<>();
