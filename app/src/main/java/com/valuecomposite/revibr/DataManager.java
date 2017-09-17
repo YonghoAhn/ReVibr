@@ -20,6 +20,7 @@ public class DataManager {
     public static HashMap<String, Character> HANGUL_FIRST_SOUND = new HashMap<>();
     public static HashMap<String, Character> HANGUL_MIDDLE_SOUND = new HashMap<>();
     public static HashMap<String, Character> HANGUL_LAST_SOUND = new HashMap<>();
+    public static HashMap<String, String> HANGUL_EXPRESS_KEYWORD = new HashMap<>();
 
     //숫자 딕셔너리
     public static HashMap<String, Character> NUMBER = new HashMap<>();
@@ -44,6 +45,7 @@ public class DataManager {
         HANGUL_FIRST_SOUND.put("100010", 'ㅁ');
         HANGUL_FIRST_SOUND.put("000110", 'ㅂ');
         HANGUL_FIRST_SOUND.put("000001", 'ㅅ');
+        HANGUL_FIRST_SOUND.put("110110", 'ㅇ');
         HANGUL_FIRST_SOUND.put("000101", 'ㅈ');
         HANGUL_FIRST_SOUND.put("000011", 'ㅊ');
         HANGUL_FIRST_SOUND.put("110100", 'ㅋ');
@@ -84,6 +86,44 @@ public class DataManager {
         HANGUL_LAST_SOUND.put("010011", 'ㅍ');
         HANGUL_LAST_SOUND.put("001011", 'ㅎ');
         HANGUL_LAST_SOUND.put("001100", 'ㅆ');
+        //겹받침
+        HANGUL_LAST_SOUND.put("100000001000", 'ㄳ');
+        HANGUL_LAST_SOUND.put("010010101000", 'ㄵ');
+        HANGUL_LAST_SOUND.put("010010001011", 'ㄶ');
+        HANGUL_LAST_SOUND.put("010000100000", 'ㄺ');
+        HANGUL_LAST_SOUND.put("010000010001", 'ㄻ');
+        HANGUL_LAST_SOUND.put("010000110000", 'ㄼ');
+        HANGUL_LAST_SOUND.put("010000001000", 'ㄽ');
+        HANGUL_LAST_SOUND.put("010000011001", 'ㄾ');
+        HANGUL_LAST_SOUND.put("010000010011", 'ㄿ');
+        HANGUL_LAST_SOUND.put("010000001011", 'ㅀ');
+        HANGUL_LAST_SOUND.put("110000001000", 'ㅄ');
+        //약자
+        HANGUL_EXPRESS_KEYWORD.put("110101","가");
+        HANGUL_EXPRESS_KEYWORD.put("111000","사");
+        HANGUL_EXPRESS_KEYWORD.put("100111","가");
+        HANGUL_EXPRESS_KEYWORD.put("111111","옹");
+        HANGUL_EXPRESS_KEYWORD.put("111101","울");
+        HANGUL_EXPRESS_KEYWORD.put("101101","옥");
+        HANGUL_EXPRESS_KEYWORD.put("100001","연");
+        HANGUL_EXPRESS_KEYWORD.put("110110","운");
+        HANGUL_EXPRESS_KEYWORD.put("111011","온");
+        HANGUL_EXPRESS_KEYWORD.put("011111","언");
+        HANGUL_EXPRESS_KEYWORD.put("011110","얼");
+        HANGUL_EXPRESS_KEYWORD.put("110011","열");
+        HANGUL_EXPRESS_KEYWORD.put("111110","인");
+        HANGUL_EXPRESS_KEYWORD.put("110111","영");
+        HANGUL_EXPRESS_KEYWORD.put("011101","을");
+        HANGUL_EXPRESS_KEYWORD.put("101011","은");
+
+        HANGUL_EXPRESS_KEYWORD.put("011100","것");
+        HANGUL_EXPRESS_KEYWORD.put("100100","그러나");
+        HANGUL_EXPRESS_KEYWORD.put("010010","그러면");
+        HANGUL_EXPRESS_KEYWORD.put("011100","그래서");
+        HANGUL_EXPRESS_KEYWORD.put("101110","그런데");
+        HANGUL_EXPRESS_KEYWORD.put("010001","그러므로");
+        HANGUL_EXPRESS_KEYWORD.put("101001","그리고");
+        HANGUL_EXPRESS_KEYWORD.put("100011","그리하여");
         //숫자
         NUMBER.put("010110",'0');
         NUMBER.put("100000",'1');

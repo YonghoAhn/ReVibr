@@ -1,15 +1,17 @@
 package com.valuecomposite.revibr;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.*;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import com.valuecomposite.revibr.databinding.ActivityReceiveBinding;
-
 import java.util.ArrayList;
 
 /**
@@ -24,6 +26,9 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
     private static int count = 0;
     static String CurrentBraille = "";
     static Vibrator vibrator;
+    static boolean isEnglish = false;
+    static boolean isNumeric = false;
+    static BrailleConverter BC = new BrailleConverter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,57 +49,135 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
     public void parseSMS(SMSItem smsItem)
     {
         display(smsItem.getTime(),smsItem.getDisplayName(),smsItem.getPhoneNum(),smsItem.getBody());
-        //SMS를 진동으로 바꾸기만 하면 됨.
-        //3개씩 끊어서 돌려주기?
+//SMS를 진동으로 바꾸기만 하면 됨.
+//3개씩 끊어서 돌려주기?
         char[] chars = smsItem.getBody().toCharArray();
-        BrailleConverter BC = new BrailleConverter();
-        for(char c : chars)
+        Log.d("MisakaMOE","Content : " + Character.toString(chars[0]));
+        Log.d("MisakaMOE","Content : " + new String("" + chars[0]).matches(".*[a-z|A-Z]"));
+        for(int i = 0; i < chars.length;i++)
         {
-            if((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) //Is it English
-            {
-                String s = BC.getEnglishBraille(c);
-                BrailleContent.add(s.substring(0,3));
-                BrailleContent.add(s.substring(4,6));
-            }
-            else if(Character.isDigit(c)) //Is It Numeric
-            {
-                String s = BC.getNumericBraille(c);
-                BrailleContent.add(s.substring(0,3));
-                BrailleContent.add(s.substring(4,6));
-            }
-            else //Is It Korean Or Special Text Or Space
-            {
-                if(containsSpecialCharacter(new String(""+c))) //특수문자면
-                {
-                    //Ignore It
-                }
-                else if(c == ' ')
-                {
-                    //Space, 000 000 Add
+            Log.d("MisakaMOE","Enter For");
 
-                }
-                else //Hangul
+            //c = c;
+            //Log.d("MisakaMOE","Content : " + chars.toString());
+            Log.d("MisakaMOE","Content : " + chars[0]);
+            String str = Character.toString(chars[i]);
+            try {
+
+                if (new String("" + chars[0]).matches(".*[a-z|A-Z]")) //Is it English
                 {
-                    //한글자만 있는것들
-                    //초성 아니면 중성 단독이면 그냥 처리
-                    //결합된 조합자면 분리 후 처리
-                    if(new String(""+c).matches(".*[ㄱ-ㅎ]")) //초성류
-                    {
-                        BC.getKoreanBraille(c,0);
+                    Log.d("MisakaMOE","Alphabet");
+                    isNumeric = false;
+                    if (!isEnglish) {
+                        BrailleContent.add("001");
+                        BrailleContent.add("011");
+                        isEnglish = true;
+                        Log.d("MisakaMOE","First Alphabet");
                     }
-                    else if(new String(""+c).matches(".*[ㅏ-ㅣ]"))
-                    {
-                        BC.getKoreanBraille(c,1);
+                    String s = BC.getEnglishBraille(chars[i]);
+                    Log.d("MisakaMOE","Content is " + s);
+                    BrailleContent.add(s.substring(0, 3));
+                    BrailleContent.add(s.substring(3, 6));
+                } else if (Character.isDigit(chars[i])) //Is It Numeric
+                {
+                    Log.d("MisakaMOE","Numeric ");
+                    isEnglish = false;
+                    if (!isNumeric) {
+                        BrailleContent.add("001");
+                        BrailleContent.add("111");
+                        Log.d("MisakaMOE","First Numeric");
                     }
-                    else
+                    String s = BC.getNumericBraille(chars[i]);
+                    Log.d("MisakaMOE","Content is " + s);
+                    BrailleContent.add(s.substring(0, 3));
+                    BrailleContent.add(s.substring(3, 6));
+                } else //Is It Korean Or Special Text Or Space
+                {
+                    isEnglish = false;
+                    isNumeric = false;
+                    if (!new String("" + chars[0]).matches("[0-9|a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|가-힝]*")) //특수문자면
                     {
-                        char[] hangul = HangulSupport.HangulAlphabet(c);
-                        for(char c1 : hangul)
+//Ignore It
+                        Log.d("MisakaMOE","Special Character");
+                    } else if (chars[i] == ' ') {
+//Space, 000 000 Add
+                        Log.d("MisakaMOE","Space");
+                        BrailleContent.add("000");
+                        BrailleContent.add("000");
+                    } else //Hangul
+                    {
+                        Log.d("MisakaMOE","Hangul");
+//한글자만 있는것들
+//초성 아니면 중성 단독이면 그냥 처리
+//결합된 조합자면 분리 후 처리
+                        if (str.matches(".*[ㄱ-ㅎ]")) //초성류
                         {
-                            BC.getKoreanBraille(c1,1);
+                            Log.d("MisakaMOE","Chosung");
+                            if (chars[i] == 'ㅇ') {
+                                Log.d("MisakaMOE","초성이 ㅇ");
+                                BrailleContent.add("110");
+                                BrailleContent.add("110");
+                            } else {
+
+                                if(chars[i] == 'ㄲ'||chars[i] == 'ㄸ'||chars[i] == 'ㅃ'||chars[i] == 'ㅆ'||chars[i] == 'ㅉ')
+                                {
+                                    BrailleContent.add("000");
+                                    BrailleContent.add("001");
+                                    switch(chars[i])
+                                    {
+                                        case 'ㄲ':
+                                            chars[i] = 'ㄱ';
+                                            break;
+                                        case 'ㄸ':
+                                            chars[i] = 'ㄷ';
+                                            break;
+                                        case 'ㅃ':
+                                            chars[i] = 'ㅂ';
+                                            break;
+                                        case 'ㅆ':
+                                            chars[i] = 'ㅅ';
+                                            break;
+                                        case 'ㅉ':
+                                            chars[i] = 'ㅈ';
+                                            break;
+                                    }
+                                }
+                                String s = BC.getKoreanBraille(chars[i], 0);
+                                Log.d("MisakaMOE","Content is " + s);
+                                BrailleContent.add(s.substring(0, 3));
+                                BrailleContent.add(s.substring(3, 6));
+                            }
+                        } else if (str.matches(".*[ㅏ-ㅣ]")) {
+                            Log.d("MisakaMOE","Joongsung");
+                            String s = BC.getKoreanBraille(chars[i], 1);
+                            Log.d("MisakaMOE","Content is " + s);
+                            BrailleContent.add(s.substring(0, 3));
+                            BrailleContent.add(s.substring(3, 6));
+                        } else {
+                            char[] hangul = HangulSupport.HangulAlphabet(chars[i]);
+                            int cnt = 0;
+                            for (char c1 : hangul) {
+                                if (c1 == 'ㅇ' && cnt == 0) {
+                                    Log.d("MisakaMOE","Chosung is ㅇ");
+                                    BrailleContent.add("110");
+                                    BrailleContent.add("110");
+                                } else {
+
+                                    String s = BC.getKoreanBraille(c1, cnt);
+                                    Log.d("MisakaMOE","Content is " + s);
+                                    BrailleContent.add(s.substring(0, 3));
+                                    BrailleContent.add(s.substring(3, 6));
+                                }
+                                cnt++;
+                            }
                         }
                     }
                 }
+            }
+            catch(Exception e)
+            {
+                Log.d("MisakaMOE","Error is " + e.getMessage().toString());
+                Toast.makeText(getApplicationContext(),e.getMessage().toString(),Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -113,8 +196,10 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
 
     public static void onTouch() //터치
     {
+        if(count == 0)
+            CurrentBraille = BrailleContent.get(count);
         IsTouched = true;
-        CurrentBraille = BrailleContent.get(count);
+        binding.brailleText.setText(CurrentBraille);
         parseBraille(false);
     }
 
@@ -122,10 +207,15 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
     {
         if(IsTouched)
         {
+            CurrentBraille = BrailleContent.get(count);
             parseBraille(true);
+            binding.brailleText.setText(CurrentBraille);
             count++;
-            if(count >= BrailleContent.size())
+            binding.BrailleChar.setText(Integer.toString(count));
+            if(count >= BrailleContent.size()) {
+                vibrator.vibrate(1000);
                 count = 0;
+            }
         }
     }
 

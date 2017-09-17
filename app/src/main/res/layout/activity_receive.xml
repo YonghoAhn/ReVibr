@@ -10,7 +10,7 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         android:orientation="vertical"
-        android:weightSum="10"
+        android:weightSum="11.5"
         tools:context="com.example.parktaejun.sixsense.SMSFunction.ReceiveMessageActivity">
         <android.support.v4.widget.Space
             android:layout_weight="0.5"
@@ -54,11 +54,46 @@
             android:layout_height="0dp" />
         <TextView
             android:background="@drawable/roundtext"
-            android:textSize="50sp"
+            android:textSize="25sp"
             android:textAlignment="center"
             android:id="@+id/body"
             android:layout_weight="5"
             android:layout_width="match_parent"
             android:layout_height="0dp" />
+        <android.support.v4.widget.Space
+            android:layout_weight="0.5"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:weightSum="2.5"
+            android:orientation="horizontal"
+            >
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/roundtext"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:id="@+id/brailleText"
+                android:layout_weight="1"
+                />
+            <android.support.v4.widget.Space
+                android:layout_weight="0.5"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/roundtext"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:id="@+id/BrailleChar"
+                android:layout_weight="1"
+                />
+        </LinearLayout>
+
     </LinearLayout>
 </layout>

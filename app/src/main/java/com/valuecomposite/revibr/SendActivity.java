@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
@@ -90,6 +91,7 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
             // 지우기 코드
             try {
                 binding.txtSend.setText(binding.txtSend.getText().toString().substring(0, binding.txtSend.getText().toString().length() - 1));
+                BrailleInput.flush();
             }
             catch (Exception e)
             {  }
@@ -104,6 +106,7 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
         } else if ((e1.getX() - e2.getX() > 0) && (e1.getY() - e2.getY() > 0)) {
             //왼쪽 위 대각선 드래그
             Toast.makeText(getApplicationContext(), "message sending activity", Toast.LENGTH_SHORT).show();
+            BrailleInput.flush();
             finish();
             //뒤로 돌아가기 코드
         } else {
@@ -147,12 +150,12 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
 
     public static void clearColor()
     {
-        binding.idxOne.setBackgroundColor(Color.WHITE);
-        binding.idxTwo.setBackgroundColor(Color.WHITE);
-        binding.idxThree.setBackgroundColor(Color.WHITE);
-        binding.idxFour.setBackgroundColor(Color.WHITE);
-        binding.idxFive.setBackgroundColor(Color.WHITE);
-        binding.idxSix.setBackgroundColor(Color.WHITE);
+        binding.idxOne.setBackground(ContextCompat.getDrawable(mContext,R.drawable.roundtext));
+        binding.idxTwo.setBackground(ContextCompat.getDrawable(mContext,R.drawable.roundtext));
+        binding.idxThree.setBackground(ContextCompat.getDrawable(mContext,R.drawable.roundtext));
+        binding.idxFour.setBackground(ContextCompat.getDrawable(mContext,R.drawable.roundtext));
+        binding.idxFive.setBackground(ContextCompat.getDrawable(mContext,R.drawable.roundtext));
+        binding.idxSix.setBackground(ContextCompat.getDrawable(mContext,R.drawable.roundtext));
 
     }
 

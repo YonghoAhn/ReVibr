@@ -67,7 +67,7 @@ public class BrailleInput {
             return true;
         }
         //EMPTY인 경우만 가능함
-        if(m_Flag == FLAG.STATE_EMPTY) {
+        if(m_Flag == FLAG.STATE_EMPTY || Braille.equals(DOUBLE_CHOSUNG)) {
             case_empty(Braille);
         }
         else if(m_Flag == FLAG.STATE_ENGLISH)
@@ -124,6 +124,7 @@ public class BrailleInput {
         }
         else if(Braille.equals(DOUBLE_CHOSUNG))
         {
+            flush();
             //쌍자음표임
             //만약 쌍자음표 플래그가 안서있으면 쌍자음일수도 있으므로 냅둠
             //쌍자음표 플랴그가 서있으면 쌍자음 처리를 해준다.
@@ -132,6 +133,7 @@ public class BrailleInput {
                 chosung = 'ㅆ';
                 SendActivity.AddChosung("ㅆ");
                 m_Flag = FLAG.STATE_HANGUL_CHOSUNG;
+                IsDoubleChosung = false;
             }
             else
             {
@@ -196,7 +198,6 @@ public class BrailleInput {
 
     public static boolean case_joongsung(String Braille)
     {
-
         if(chosung == ' ')
         {
             if(IsDoubleChosung)
@@ -227,7 +228,7 @@ public class BrailleInput {
         char c = BC.getHangulCharacter(Braille);
         if(c == ' ')
             return false;
-        m_Flag = FLAG.STATE_HANGUL_JOONGSUNG;
+
         if (c == 'ㅐ') //중성이 입력되었다면
         {
             switch (joongsung) {
@@ -243,17 +244,31 @@ public class BrailleInput {
                 case 'ㅝ':
                     joongsung = 'ㅞ';
                     break;
+                case ' ':
+                    joongsung = 'ㅐ';
+                    break;
             }
+        }
+        else if(m_Flag == FLAG.STATE_HANGUL_JOONGSUNG) //겹중성도 아닌데 모음이 입력됨
+        {
+            flush();
+            case_joongsung(Braille);
             return true;
-        } else {
+        }
+        else {
             joongsung = c;
         }
+        m_Flag = FLAG.STATE_HANGUL_JOONGSUNG;
         String s = "" + HangulSupport.CombineHangul(new char[]{chosung,joongsung,' '}) ;
         SendActivity.AddText(s);
         return true;
     }
 
     public static boolean case_jongsung(String Braille) {
+        if(chosung==' ' && joongsung == ' ')
+        {
+            //ignore it
+        }
         int pos = BC.getHangulPosition(Braille);
         char c = BC.getHangulCharacter(Braille);
 
