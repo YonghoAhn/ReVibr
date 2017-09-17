@@ -26,6 +26,18 @@ public class TTSManager {
         });
     }
 
+    public void speak(String text)
+    {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        {
+            ttsGreater21(text);
+        }
+        else
+        {
+            ttsUnder20(text);
+        }
+    }
+
     @SuppressWarnings("deprecation")
     private void ttsUnder20(String text) {
         HashMap<String, String> map = new HashMap<>();
