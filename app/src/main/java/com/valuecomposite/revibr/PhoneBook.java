@@ -1,6 +1,7 @@
 package com.valuecomposite.revibr;
 
 import android.Manifest;
+import android.app.VoiceInteractor;
 import android.content.*;
 import android.content.BroadcastReceiver;
 import android.content.pm.PackageManager;
@@ -163,7 +164,13 @@ public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGe
             Intent scActivityIntent = new Intent(getApplicationContext(), ReceiveActivity.class);
             scActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getApplicationContext().startActivity(scActivityIntent);
-        } else {
+        } else if((e1.getX() - e2.getX() > 0)&&(e1.getY()-e2.getY() < 0)){
+            Intent optActivityIntent = new Intent(getApplicationContext(), OptionActivity.class);
+            optActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getApplicationContext().startActivity(optActivityIntent);
+        }
+        else
+        {
             Toast.makeText(mContext, "nothing on gesture", Toast.LENGTH_SHORT).show();
         }
         return true;

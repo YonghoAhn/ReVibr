@@ -190,16 +190,43 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
         binding.body.setText(content);
     }
 
-    public static void onTouch() //터치
+    public static void onVibrate(boolean Gesture)
     {
-        if(DataManager.VibrateMode == 1) {
-            if (count == 0)
-                CurrentBraille = BrailleContent.get(count);
-            IsTouched = true;
-            binding.brailleText.setText(CurrentBraille);
-            parseBraille(false);
+        // 일반 출력방식
+        //      제스처가 어떤가
+        //      터치일때/슬라이드일때
+        // 3점식 출력방식
+        //      제스처가 어떤가
+        //      터치일때만
+        // 6점식 출력방식
+        //      제스처가 어떤가
+        //      터치일때만
+
+
+
+        if(DataManager.VibrateMode == 1) { //기존입력
+            if(Gesture) {
+                if (count == 0)
+                    CurrentBraille = BrailleContent.get(count);
+                IsTouched = true;
+                binding.brailleText.setText(CurrentBraille);
+                parseBraille(false);
+            }
+            else {
+                if (IsTouched) {
+                    CurrentBraille = BrailleContent.get(count);
+                    parseBraille(true);
+                    binding.brailleText.setText(CurrentBraille);
+                    count++;
+                    binding.BrailleChar.setText(Integer.toString(count));
+                    if (count >= BrailleContent.size()) {
+                        vibrator.vibrate(1000);
+                        count = 0;
+                    }
+                }
+            }
         }
-        else if(DataManager.VibrateMode == 2)
+        else if(DataManager.VibrateMode == 2) //3점식
         {
             CurrentBraille = BrailleContent.get(count);
             char[] a = CurrentBraille.toCharArray();
@@ -217,7 +244,7 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
             }
             count++;
         }
-        else
+        else //6점식
         {
             CurrentBraille = BrailleContent.get(count++)+BrailleContent.get(count);
             char[] a = CurrentBraille.toCharArray();
@@ -237,18 +264,37 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
         }
     }
 
+    public static void onTouch() //터치
+    {
+
+    }
+
     public static void onFling() //쓸어내리기
     {
-        if(IsTouched)
+
+    }
+
+    public static void parseBraille(boolean Mode, String braille)
+    {
+        if(Mode) //3점식
         {
-            CurrentBraille = BrailleContent.get(count);
-            parseBraille(true);
-            binding.brailleText.setText(CurrentBraille);
-            count++;
-            binding.BrailleChar.setText(Integer.toString(count));
-            if(count >= BrailleContent.size()) {
-                vibrator.vibrate(1000);
-                count = 0;
+
+        }
+        else //6점식
+        {
+
+        }
+
+        for(char c : braille.toCharArray())
+        {
+            int tmp = (int)c;
+            if(tmp==0)
+            {
+                vibrator.vibrate(300);
+            }
+            else
+            {
+                vibrator.vibrate(100);
             }
         }
     }
