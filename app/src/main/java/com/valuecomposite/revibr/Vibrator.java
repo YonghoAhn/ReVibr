@@ -19,7 +19,7 @@ public class Vibrator {
     public void vibrate(int millisecond)
     {
         m_Vibrator.vibrate(millisecond);
-        m_Vibrator.cancel();
+        //m_Vibrator.cancel();
     }
 
     public void cancel()

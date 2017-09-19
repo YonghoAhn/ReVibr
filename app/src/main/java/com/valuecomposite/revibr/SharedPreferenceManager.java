@@ -17,6 +17,11 @@ public class SharedPreferenceManager extends Activity {
         return pref.getString(subkey, "");
     }
 
+    public String getPreferences(String key, String subkey, String defaultValue){
+        SharedPreferences pref = getSharedPreferences(key, MODE_PRIVATE);
+        return pref.getString(subkey, defaultValue);
+    }
+
     // 값 저장하기
     public void savePreferences(String key, String subkey, String content){
         SharedPreferences pref = getSharedPreferences(key, MODE_PRIVATE);

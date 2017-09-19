@@ -201,100 +201,69 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
         // 6점식 출력방식
         //      제스처가 어떤가
         //      터치일때만
-
-
-
         if(DataManager.VibrateMode == 1) { //기존입력
-            if(Gesture) {
+            if(Gesture) { // 터치인가?
                 if (count == 0)
                     CurrentBraille = BrailleContent.get(count);
                 IsTouched = true;
-                binding.brailleText.setText(CurrentBraille);
                 parseBraille(false);
             }
-            else {
-                if (IsTouched) {
+            else { //슬라이드였음
+                if (IsTouched) { //터치되었음을 체크
                     CurrentBraille = BrailleContent.get(count);
                     parseBraille(true);
-                    binding.brailleText.setText(CurrentBraille);
                     count++;
-                    binding.BrailleChar.setText(Integer.toString(count));
-                    if (count >= BrailleContent.size()) {
-                        vibrator.vibrate(1000);
-                        count = 0;
-                    }
+                    IsTouched = false;
+
                 }
             }
         }
         else if(DataManager.VibrateMode == 2) //3점식
         {
             CurrentBraille = BrailleContent.get(count);
-            char[] a = CurrentBraille.toCharArray();
-            for(char c : a)
-            {
-                int tmp = (int)c;
-                if(tmp==0)
-                {
-                    vibrator.vibrate(300);
-                }
-                else
-                {
-                    vibrator.vibrate(100);
-                }
-            }
+            parseBraille(CurrentBraille);
             count++;
         }
         else //6점식
         {
             CurrentBraille = BrailleContent.get(count++)+BrailleContent.get(count);
-            char[] a = CurrentBraille.toCharArray();
-            for(char c : a)
-            {
-                int tmp = (int)c;
-                if(tmp==0)
-                {
-                    vibrator.vibrate(300);
-                }
-                else
-                {
-                    vibrator.vibrate(100);
-                }
-            }
+            parseBraille(CurrentBraille);
             count++;
+        }
+
+        binding.brailleText.setText(CurrentBraille);
+        binding.BrailleChar.setText(Integer.toString(count));
+
+        if (count >= BrailleContent.size()) {
+            vibrator.vibrate(1000);
+            count = 0;
         }
     }
 
     public static void onTouch() //터치
     {
-
+        onVibrate(true);
     }
 
     public static void onFling() //쓸어내리기
     {
-
+        onVibrate(false);
     }
 
-    public static void parseBraille(boolean Mode, String braille)
+    public static void parseBraille(String braille)
     {
-        if(Mode) //3점식
-        {
-
-        }
-        else //6점식
-        {
-
-        }
-
         for(char c : braille.toCharArray())
         {
             int tmp = (int)c;
-            if(tmp==0)
+            if(tmp==49) // 1이면
             {
                 vibrator.vibrate(300);
+                vibrator.cancel();
             }
             else
             {
                 vibrator.vibrate(100);
+                vibrator.cancel();
             }
         }
     }

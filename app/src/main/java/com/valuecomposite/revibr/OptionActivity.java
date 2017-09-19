@@ -17,12 +17,27 @@ import com.valuecomposite.revibr.databinding.ActivityOptionBinding;
 public class OptionActivity extends AppCompatActivity {
     static ActivityOptionBinding binding;
     static SharedPreferenceManager sharedPreferenceManager = new SharedPreferenceManager();
+
+    public String getPreferences(String key, String subkey){
+        SharedPreferences pref = getSharedPreferences(key, MODE_PRIVATE);
+        return pref.getString(subkey, "");
+    }
+
+    public void savePreferences(String key, String subkey, String content){
+        SharedPreferences pref = getSharedPreferences(key, MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(subkey, content);
+        editor.commit();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_option);
         binding = DataBindingUtil.setContentView(this,R.layout.activity_option);
-        switch (sharedPreferenceManager.getPreferences("setting","mode").toCharArray()[0]) //설정된 데이터를 바인딩
+        if(getPreferences("setting","mode").equals(""))
+            savePreferences("setting","mode","1");
+        switch (getPreferences("setting","mode").toCharArray()[0]) //설정된 데이터를 바인딩
         {
             case '1':
                 binding.Optspinner.setSelection(0);
@@ -41,15 +56,15 @@ public class OptionActivity extends AppCompatActivity {
                 {
                     case 0:
                         DataManager.VibrateMode = 1;
-                        sharedPreferenceManager.savePreferences("setting","mode","1");
+                        savePreferences("setting","mode","1");
                         break;
                     case 1:
                         DataManager.VibrateMode = 2;
-                        sharedPreferenceManager.savePreferences("setting","mode","2");
+                        savePreferences("setting","mode","2");
                         break;
                     case 2:
                         DataManager.VibrateMode = 3;
-                        sharedPreferenceManager.savePreferences("setting","mode","3");
+                        savePreferences("setting","mode","3");
                         break;
                 }
             }
