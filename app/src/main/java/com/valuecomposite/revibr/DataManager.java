@@ -1,6 +1,9 @@
 package com.valuecomposite.revibr;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.ContactsContract;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +38,8 @@ public class DataManager {
     public static final String WHITE_SPACE = "000000";
     public static final String DOUBLE_CHAR = "000001";
     public static final String ALPHABET_SIGN = "001011";
+
+
 
     static    {
         //한글 초성

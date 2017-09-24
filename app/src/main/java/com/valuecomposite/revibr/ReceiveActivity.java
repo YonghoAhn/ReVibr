@@ -1,7 +1,10 @@
 package com.valuecomposite.revibr;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Debug;
+import android.speech.RecognizerIntent;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,6 +15,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.valuecomposite.revibr.databinding.ActivityReceiveBinding;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -29,6 +34,8 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
     static boolean isEnglish = false;
     static boolean isNumeric = false;
     static BrailleConverter BC = new BrailleConverter();
+    Intent intent;
+    TTSManager ttsManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +44,21 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
         binding = DataBindingUtil.setContentView(this, R.layout.activity_receive);
         gestureDetector = new GestureDetector(this, this);
         vibrator = new Vibrator(getApplicationContext());
+        intent =  new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ko-KR");
+        initData();
+        ttsManager = new TTSManager(getApplicationContext());
         parseSMS(DataManager.CurrentSMS);
+    }
+
+    public String getPreferences(String key, String subkey){
+        SharedPreferences pref = getSharedPreferences(key, MODE_PRIVATE);
+        return pref.getString(subkey, "");
+    }
+
+    private void initData() {
+        DataManager.VibrateMode = Integer.parseInt(getPreferences("setting","mode"));
     }
 
     @Override
@@ -48,6 +69,17 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
 
     public void parseSMS(SMSItem smsItem)
     {
+        //SMS 발신자가 아는 인간인가
+        ContactManager contactManager = new ContactManager(getApplicationContext());
+        ArrayList<PhoneBookItem> Contacts = contactManager.getContactList();
+        for(PhoneBookItem pbItem : Contacts)
+        {
+            if(pbItem.getPhoneNumber().equals(smsItem.getPhoneNum()))
+            {
+                smsItem.setDisplayName(pbItem.getDisplayName());
+            }
+        }
+
         display(smsItem.getTime(),smsItem.getDisplayName(),smsItem.getPhoneNum(),smsItem.getBody());
         //SMS를 진동으로 바꾸기만 하면 됨.
         //3개씩 끊어서 돌려주기?
@@ -201,6 +233,7 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
         // 6점식 출력방식
         //      제스처가 어떤가
         //      터치일때만
+
         if(DataManager.VibrateMode == 1) { //기존입력
             if(Gesture) { // 터치인가?
                 if (count == 0)
@@ -306,6 +339,13 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
     }
 
     @Override
+    protected void onPause() //홈버튼 눌렀거나 뭘 위로 올리면 Activity 꺼버림
+    {
+        super.onPause();
+        finishAffinity();
+    }
+
+    @Override
     public boolean onSingleTapConfirmed(MotionEvent motionEvent) {
         ReceiveActivity.onTouch();
         return true;
@@ -351,6 +391,11 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
         if (Math.abs(e1.getX() - e2.getX()) < 250 && (e1.getY() - e2.getY() > 0)) {
             //위로 드래그
             ReceiveActivity.onFling();
+        }
+        else if (Math.abs(e1.getX() - e2.getX()) > 250 && (e1.getY() - e2.getY() > 0) && (e1.getX() - e2.getX()) < 0 )
+        {
+
+            ttsManager.speak(binding.body.getText().toString());
         }
         return true;
     }

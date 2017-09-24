@@ -41,13 +41,6 @@ public class BroadcastReceiver extends android.content.BroadcastReceiver {
 
             //SMS 수신 번호가 등록된 사람인가?
             String person = "모르는 번호";
-            for(int i = 0; i< DataManager.PBItems.size();i++)
-            {
-                if(DataManager.PBItems.get(i).getPhoneNum().equals(number)) //일치하는 사람이 없다면 모르는 번호일 것.
-                {
-                    person = DataManager.PBItems.get(i).getDisplayName();
-                }
-            }
 
             //SMS 수신 메세지
             String message = smsMessage[0].getMessageBody().toString();

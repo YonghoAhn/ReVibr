@@ -50,57 +50,24 @@ public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGe
                     ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED ||
                     ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
                     ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.MODIFY_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_CONTACTS, Manifest.permission.SEND_SMS,
-                            Manifest.permission.INTERNET, Manifest.permission.RECORD_AUDIO, Manifest.permission.MODIFY_PHONE_STATE}, 200);
-            }
-            else
-            {
-
-            }
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.MODIFY_PHONE_STATE) != PackageManager.PERMISSION_GRANTED)
+                requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_CONTACTS, Manifest.permission.SEND_SMS,
+                        Manifest.permission.INTERNET, Manifest.permission.RECORD_AUDIO, Manifest.permission.MODIFY_PHONE_STATE}, 200);
         }
         Initialize();
     }
 
     public void Initialize()
     {
-        initPhoneBook();
+        ContactManager contactManager = new ContactManager(getApplicationContext());
+        DataManager.PBItems = contactManager.getContactList();
         PBDisplay(0);
-    }
-
-    public void initPhoneBook()
-    {
-        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
-
-        String[] projection = new String[] {
-                ContactsContract.CommonDataKinds.Phone.CONTACT_ID, // 연락처 ID -> 사진 정보 가져오는데 사용
-                ContactsContract.CommonDataKinds.Phone.NUMBER,        // 연락처
-                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME }; // 연락처 이름.
-
-        String[] selectionArgs = null;
-
-        String sortOrder = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
-                + " COLLATE LOCALIZED ASC";
-
-        Cursor contactCursor = managedQuery(uri, projection, null,
-                selectionArgs, sortOrder);
-
-        if (contactCursor.moveToFirst()) {
-            do {
-                String phonenumber = contactCursor.getString(1).replaceAll("-", "");
-                PhoneBookItem acontact = new PhoneBookItem();
-                acontact.setPhoneNum(phonenumber);
-                acontact.setDisplayName(contactCursor.getString(2));
-
-                DataManager.PBItems.add(acontact);
-            } while (contactCursor.moveToNext());
-        }
     }
 
     public void PBDisplay(int pos)
     {
         PhoneBookItem p = DataManager.PBItems.get(pos);
-        binding.number.setText(p.getPhoneNum());
+        binding.number.setText(p.getPhoneNumber());
         binding.name.setText(p.getDisplayName());
     }
 
@@ -151,16 +118,13 @@ public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGe
             //오른쪽 아래 대각선 드래그
             Toast.makeText(getApplicationContext(), "message sending activity", Toast.LENGTH_SHORT).show();
             Intent smsActivityIntent = new Intent(getApplicationContext(), SendActivity.class);
-            smsActivityIntent.putExtra("number", DataManager.PBItems.get(PhoneBookPosition).getPhoneNum());
+            smsActivityIntent.putExtra("number", DataManager.PBItems.get(PhoneBookPosition).getPhoneNumber());
             smsActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getApplicationContext().startActivity(smsActivityIntent);
         } else if ((e1.getX() - e2.getX() > 0) && (e1.getY() - e2.getY() > 0)) {
             //왼쪽 위 대각선 드래그
             Toast.makeText(getApplicationContext(), "message receiving activity", Toast.LENGTH_SHORT).show();
-            DataManager.CurrentSMS.setDisplayName("");
-            DataManager.CurrentSMS.setTime("");
-            DataManager.CurrentSMS.setBody("");
-            DataManager.CurrentSMS.setPhoneNum("");
+            DataManager.CurrentSMS = new SMSItem("","","","");
             Intent scActivityIntent = new Intent(getApplicationContext(), ReceiveActivity.class);
             scActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getApplicationContext().startActivity(scActivityIntent);

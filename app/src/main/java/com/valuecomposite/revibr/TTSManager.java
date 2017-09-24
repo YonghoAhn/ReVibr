@@ -20,7 +20,11 @@ public class TTSManager {
             public void onInit(int i) {
                 if(i != TextToSpeech.ERROR)
                 {
-                    tts.setLanguage(Locale.KOREAN);
+                    tts.setLanguage(Locale.KOREA);
+                }
+                else
+                {
+                    tts.setLanguage(Locale.KOREA);
                 }
             }
         });

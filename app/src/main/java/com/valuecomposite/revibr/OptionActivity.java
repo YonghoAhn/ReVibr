@@ -16,7 +16,6 @@ import com.valuecomposite.revibr.databinding.ActivityOptionBinding;
 
 public class OptionActivity extends AppCompatActivity {
     static ActivityOptionBinding binding;
-    static SharedPreferenceManager sharedPreferenceManager = new SharedPreferenceManager();
 
     public String getPreferences(String key, String subkey){
         SharedPreferences pref = getSharedPreferences(key, MODE_PRIVATE);
