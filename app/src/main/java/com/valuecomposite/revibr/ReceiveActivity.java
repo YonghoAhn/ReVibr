@@ -32,6 +32,7 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
     static String CurrentBraille = "";
     static Vibrator vibrator;
     static boolean isEnglish = false;
+
     static boolean isNumeric = false;
     static BrailleConverter BC = new BrailleConverter();
     Intent intent;
@@ -44,6 +45,7 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
         binding = DataBindingUtil.setContentView(this, R.layout.activity_receive);
         gestureDetector = new GestureDetector(this, this);
         vibrator = new Vibrator(getApplicationContext());
+        vibrator.vibrate(100,100,100);
         intent =  new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ko-KR");
@@ -74,7 +76,8 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
         ArrayList<PhoneBookItem> Contacts = contactManager.getContactList();
         for(PhoneBookItem pbItem : Contacts)
         {
-            if(pbItem.getPhoneNumber().equals(smsItem.getPhoneNum()))
+
+            if(pbItem.getPhoneNumber().replace("-","").equals(smsItem.getPhoneNum()))
             {
                 smsItem.setDisplayName(pbItem.getDisplayName());
             }
@@ -268,7 +271,7 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
         binding.BrailleChar.setText(Integer.toString(count));
 
         if (count >= BrailleContent.size()) {
-            vibrator.vibrate(1000);
+            vibrator.vibrate(500);
             count = 0;
         }
     }
@@ -285,20 +288,8 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
 
     public static void parseBraille(String braille)
     {
-        for(char c : braille.toCharArray())
-        {
-            int tmp = (int)c;
-            if(tmp==49) // 1이면
-            {
-                vibrator.vibrate(300);
-                vibrator.cancel();
-            }
-            else
-            {
-                vibrator.vibrate(100);
-                vibrator.cancel();
-            }
-        }
+        char[] c = braille.toCharArray();
+        vibrator.vibrate(((int)c[0]!=49) ? 50 : 100,((int)c[1]!=49) ? 50 : 100,((int)c[2]!=49) ? 50 : 100);
     }
 
     public static void parseBraille(boolean IsFling)
@@ -392,9 +383,8 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
             //위로 드래그
             ReceiveActivity.onFling();
         }
-        else if (Math.abs(e1.getX() - e2.getX()) > 250 && (e1.getY() - e2.getY() > 0) && (e1.getX() - e2.getX()) < 0 )
+        else if (Math.abs(e1.getX() - e2.getX()) > 250 && (e1.getY() - e2.getY() > 0) && (e1.getX() - e2.getX()) < 0 ) //오른쪽 위로 슬라이드
         {
-
             ttsManager.speak(binding.body.getText().toString());
         }
         return true;

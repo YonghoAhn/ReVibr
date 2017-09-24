@@ -37,7 +37,7 @@ public class Vibrator {
 
     public void vibrate(int millisecond, int millisecond2, int millisecond3)
     {
-        long[] pattern = new long[]{0,millisecond,20, millisecond2,20,millisecond3};
+        long[] pattern = new long[]{0,millisecond,200, millisecond2,200,millisecond3};
         m_Vibrator.vibrate(pattern,-1);
     }
 }
