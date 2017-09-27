@@ -32,7 +32,7 @@ public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGe
     static ActivityPhonebookBinding binding;
     private GestureDetectorCompat gDetector;
     LinearLayout gestureOverlay;
-
+    TTSManager ttsManager;
     static final int ZERO = 0;
     static final int GESTURE_LIMIT = 250;
     static int PhoneBookPosition = 0;
@@ -61,6 +61,7 @@ public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGe
     {
         ContactManager contactManager = new ContactManager(getApplicationContext());
         DataManager.PBItems = contactManager.getContactList();
+        ttsManager = new TTSManager(getApplicationContext());
         PBDisplay(0);
     }
 
@@ -124,7 +125,7 @@ public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGe
         } else if ((e1.getX() - e2.getX() > 0) && (e1.getY() - e2.getY() > 0)) {
             //왼쪽 위 대각선 드래그
             Toast.makeText(getApplicationContext(), "message receiving activity", Toast.LENGTH_SHORT).show();
-            DataManager.CurrentSMS = new SMSItem("","","","");
+            DataManager.CurrentSMS = new SMSItem(" "," "," "," ");
             Intent scActivityIntent = new Intent(getApplicationContext(), ReceiveActivity.class);
             scActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getApplicationContext().startActivity(scActivityIntent);
@@ -132,6 +133,10 @@ public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGe
             Intent optActivityIntent = new Intent(getApplicationContext(), OptionActivity.class);
             optActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getApplicationContext().startActivity(optActivityIntent);
+        }
+        else if (Math.abs(e1.getX() - e2.getX()) > 250 && (e1.getY() - e2.getY() > 0) && (e1.getX() - e2.getX()) < 0 ) //오른쪽 위로 슬라이드
+        {
+            ttsManager.speak(binding.name.getText().toString() + " " + binding.number.getText().toString()); //이름 번호 말한다
         }
         else
         {
