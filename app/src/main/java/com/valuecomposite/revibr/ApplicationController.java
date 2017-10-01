@@ -12,8 +12,8 @@ import java.util.HashMap;
  */
 
 public class ApplicationController extends Application {
-    private static final String PROPERTY_ID = "추적 ID";
-
+    private static final String PROPERTY_ID = "UA-107184842-1";
+    private Tracker mTracker;
     public enum TrackerName {
         APP_TRACKER,           // 앱 별로 트래킹
         GLOBAL_TRACKER,        // 모든 앱을 통틀어 트래킹
@@ -22,7 +22,7 @@ public class ApplicationController extends Application {
 
     HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
 
-    synchronized Tracker getTracker(TrackerName trackerId){
+    synchronized public Tracker getTracker(TrackerName trackerId){
         if(!mTrackers.containsKey(trackerId)){
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
             Tracker t = (trackerId == TrackerName.APP_TRACKER) ? analytics.newTracker(PROPERTY_ID) :
@@ -31,6 +31,15 @@ public class ApplicationController extends Application {
             mTrackers.put(trackerId, t);
         }
         return mTrackers.get(trackerId);
+    }
+
+    synchronized public Tracker getDefaultTracker() {
+        if (mTracker == null) {
+            GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+            // Setting mTracker to Analytics Tracker declared in our xml Folder
+            mTracker = analytics.newTracker(R.xml.analytics_tracker);
+        }
+        return mTracker;
     }
 
 }

@@ -5,9 +5,9 @@
     <!-- Automatic Activity measurement -->
     <bool name="ga_autoActivityTracking">true</bool>
     <!-- Activities -->
-    <screenName name=""></screenName>
+    <screenName name="PhoneBook">PhoneBook</screenName>
 
-    <screenName name=""></screenName>
+    <screenName name="ReceiveActivity">ReceiveActivity</screenName>
     <!-- Tracker ID -->
     <string name="ga_trackingId">UA-107184842-1</string>
 </resources>

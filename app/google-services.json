@@ -1,0 +1,43 @@
+{
+  "project_info": {
+    "project_number": "935975460670",
+    "project_id": "firebase-revibr"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:935975460670:android:0c90010093c31df3",
+        "android_client_info": {
+          "package_name": "com.valuecomposite.revibr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "935975460670-jl5g2ok2j7k967qe1rl7ujv10r44ju19.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjcA_dhtS4hDnVh6soRZnIdSko793ACag"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-107184842-1"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

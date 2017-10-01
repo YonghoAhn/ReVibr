@@ -13,6 +13,8 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.valuecomposite.revibr.databinding.ActivitySendBinding;
 
 import static com.valuecomposite.revibr.DataManager.mContext;
@@ -30,7 +32,7 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
     private GestureDetectorCompat gDetector;
     private static String smsNum = "";
     public static int count = 0;
-
+    private Tracker mTracker;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +41,18 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
         gDetector = new GestureDetectorCompat(this,this);
         Intent getIntent = getIntent();
         smsNum = getIntent.getExtras().getString("number");
+        ApplicationController application = (ApplicationController) getApplication();
+        mTracker = application.getDefaultTracker();
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        //using tracker variable to set Screen Name
+        mTracker.setScreenName("PhoneBookActivity");
+        //sending the screen to analytics using ScreenViewBuilder() method
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override

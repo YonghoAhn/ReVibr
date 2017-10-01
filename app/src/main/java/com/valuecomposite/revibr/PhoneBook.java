@@ -20,6 +20,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.valuecomposite.revibr.databinding.ActivityPhonebookBinding;
 import static com.valuecomposite.revibr.DataManager.mContext;
 
@@ -36,6 +38,7 @@ public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGe
     static final int ZERO = 0;
     static final int GESTURE_LIMIT = 250;
     static int PhoneBookPosition = 0;
+    private Tracker mTracker;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -43,6 +46,8 @@ public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGe
         binding = DataBindingUtil.setContentView(this, R.layout.activity_phonebook);
         mContext = getApplicationContext();
         gDetector = new GestureDetectorCompat(this,this);
+        ApplicationController application = (ApplicationController) getApplication();
+        mTracker = application.getDefaultTracker();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED ||
                     ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED ||
@@ -55,6 +60,17 @@ public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGe
                         Manifest.permission.INTERNET, Manifest.permission.RECORD_AUDIO, Manifest.permission.MODIFY_PHONE_STATE}, 200);
         }
         Initialize();
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        //using tracker variable to set Screen Name
+        mTracker.setScreenName("PhoneBookActivity");
+        //sending the screen to analytics using ScreenViewBuilder() method
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
     }
 
     public void Initialize()

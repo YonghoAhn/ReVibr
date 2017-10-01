@@ -14,12 +14,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.valuecomposite.revibr.databinding.ActivityReceiveBinding;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-/**
+/*
  * Created by ayh07 on 8/12/2017.
  */
 public class ReceiveActivity extends AppCompatActivity implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener{
@@ -32,7 +34,7 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
     static String CurrentBraille = "";
     static Vibrator vibrator;
     static boolean isEnglish = false;
-
+    private Tracker mTracker;
     static boolean isNumeric = false;
     static BrailleConverter BC = new BrailleConverter();
     Intent intent;
@@ -51,6 +53,8 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ko-KR");
         initData();
         ttsManager = new TTSManager(getApplicationContext());
+        ApplicationController application = (ApplicationController) getApplication();
+        mTracker = application.getDefaultTracker();
         parseSMS(DataManager.CurrentSMS);
     }
 
@@ -327,6 +331,16 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
                     break;
             }
         }
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        //using tracker variable to set Screen Name
+        mTracker.setScreenName("ReceiveActivity");
+        //sending the screen to analytics using ScreenViewBuilder() method
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override

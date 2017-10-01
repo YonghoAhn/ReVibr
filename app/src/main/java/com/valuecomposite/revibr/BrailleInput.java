@@ -198,7 +198,7 @@ public class BrailleInput {
 
     public static boolean case_joongsung(String Braille)
     {
-        if(chosung == ' ')
+        if(chosung == ' ')//초성이 비어있음
         {
             if(IsDoubleChosung)
             {
@@ -212,6 +212,10 @@ public class BrailleInput {
             }
         }
 
+        char c = BC.getHangulCharacter(Braille);
+        if(c == ' ')
+            return false;
+
         int pos = BC.getHangulPosition(Braille);
         if(pos != 2) //중성이 아닌 경우
         {
@@ -224,39 +228,34 @@ public class BrailleInput {
                 case_jongsung(Braille);
             }
         }
-
-        char c = BC.getHangulCharacter(Braille);
-        if(c == ' ')
-            return false;
-
-        if (c == 'ㅐ') //중성이 입력되었다면
+        else //중성이 입력됨
         {
-            switch (joongsung) {
-                case 'ㅜ':
-                    joongsung = 'ㅟ';
-                    break;
-                case 'ㅑ':
-                    joongsung = 'ㅒ';
-                    break;
-                case 'ㅘ':
-                    joongsung = 'ㅙ';
-                    break;
-                case 'ㅝ':
-                    joongsung = 'ㅞ';
-                    break;
-                case ' ':
-                    joongsung = 'ㅐ';
-                    break;
+            if (c == 'ㅐ' && joongsung != ' ') //뭔가 추가적으로 입력될만한게 있는가?
+            {
+                switch (joongsung) {
+                    case 'ㅜ':
+                        joongsung = 'ㅟ';
+                        break;
+                    case 'ㅑ':
+                        joongsung = 'ㅒ';
+                        break;
+                    case 'ㅘ':
+                        joongsung = 'ㅙ';
+                        break;
+                    case 'ㅝ':
+                        joongsung = 'ㅞ';
+                        break;
+                }
             }
-        }
-        else if(m_Flag == FLAG.STATE_HANGUL_JOONGSUNG) //겹중성도 아닌데 모음이 입력됨
-        {
-            flush();
-            case_joongsung(Braille);
-            return true;
-        }
-        else {
-            joongsung = c;
+            else if(m_Flag == FLAG.STATE_HANGUL_JOONGSUNG) //중성 추가는 아닌데 모음이 입력된 상태임
+            {
+                flush(); //플러시
+                case_joongsung(Braille);
+                return true;
+            }
+            else {
+                joongsung = c;
+            }
         }
         m_Flag = FLAG.STATE_HANGUL_JOONGSUNG;
         String s = "" + HangulSupport.CombineHangul(new char[]{chosung,joongsung,' '}) ;
