@@ -48,9 +48,7 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
         gestureDetector = new GestureDetector(this, this);
         vibrator = new Vibrator(getApplicationContext());
         vibrator.vibrate(100,100,100);
-        intent =  new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ko-KR");
+
         initData();
         ttsManager = new TTSManager(getApplicationContext());
         ApplicationController application = (ApplicationController) getApplication();

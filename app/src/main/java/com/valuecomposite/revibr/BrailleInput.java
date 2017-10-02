@@ -60,7 +60,7 @@ public class BrailleInput {
     public static boolean Composition(String s)
     {
         //띄어쓰기면 모든 플래그를 제거하고, EMPTY로 돌린다.
-        if(s.equals("000000"))
+        if(s.equals("0000000"))
         {
             flush();
             SendActivity.AddChosung(" ");

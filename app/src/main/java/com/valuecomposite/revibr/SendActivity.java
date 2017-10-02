@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +19,8 @@ import android.widget.Toast;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.valuecomposite.revibr.databinding.ActivitySendBinding;
+
+import java.util.ArrayList;
 
 import static com.valuecomposite.revibr.DataManager.mContext;
 import static com.valuecomposite.revibr.PhoneBook.GESTURE_LIMIT;
@@ -33,6 +38,44 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
     private static String smsNum = "";
     public static int count = 0;
     private Tracker mTracker;
+    private Intent intent;
+    private SpeechRecognizer mRecognizer;
+    private RecognitionListener listener = new RecognitionListener() {
+        @Override
+        public void onReadyForSpeech(Bundle bundle) {}
+
+        @Override
+        public void onBeginningOfSpeech() {}
+
+        @Override
+        public void onRmsChanged(float v) {}
+
+        @Override
+        public void onBufferReceived(byte[] bytes) {}
+
+        @Override
+        public void onEndOfSpeech() {}
+
+        @Override
+        public void onError(int i) {}
+
+        @Override
+        public void onPartialResults(Bundle bundle) {}
+
+        @Override
+        public void onEvent(int i, Bundle bundle) {}
+
+        @Override
+        public void onResults(Bundle results) {
+            String key = "";
+            key = SpeechRecognizer.RESULTS_RECOGNITION;
+            ArrayList<String> mResult = results.getStringArrayList(key);
+            String[] rs = new String[mResult.size()];
+            mResult.toArray(rs);
+            binding.txtSend.setText(""+rs[0]);
+        }
+
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +86,13 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
         smsNum = getIntent.getExtras().getString("number");
         ApplicationController application = (ApplicationController) getApplication();
         mTracker = application.getDefaultTracker();
+
+        intent =  new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ko-KR");
+        mRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
+        mRecognizer.setRecognitionListener(listener);
+        mRecognizer.startListening(intent);
     }
 
     @Override
