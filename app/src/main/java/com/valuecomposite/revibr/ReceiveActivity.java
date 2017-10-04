@@ -1,10 +1,7 @@
 package com.valuecomposite.revibr;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Debug;
-import android.speech.RecognizerIntent;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,14 +11,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.valuecomposite.revibr.databinding.ActivityReceiveBinding;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-/*
+/**
  * Created by ayh07 on 8/12/2017.
  */
 public class ReceiveActivity extends AppCompatActivity implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener{
@@ -34,11 +27,8 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
     static String CurrentBraille = "";
     static Vibrator vibrator;
     static boolean isEnglish = false;
-    private Tracker mTracker;
     static boolean isNumeric = false;
     static BrailleConverter BC = new BrailleConverter();
-    Intent intent;
-    TTSManager ttsManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,22 +37,7 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
         binding = DataBindingUtil.setContentView(this, R.layout.activity_receive);
         gestureDetector = new GestureDetector(this, this);
         vibrator = new Vibrator(getApplicationContext());
-        vibrator.vibrate(100,100,100);
-
-        initData();
-        ttsManager = new TTSManager(getApplicationContext());
-        ApplicationController application = (ApplicationController) getApplication();
-        mTracker = application.getDefaultTracker();
         parseSMS(DataManager.CurrentSMS);
-    }
-
-    public String getPreferences(String key, String subkey){
-        SharedPreferences pref = getSharedPreferences(key, MODE_PRIVATE);
-        return pref.getString(subkey, "");
-    }
-
-    private void initData() {
-        DataManager.VibrateMode = Integer.parseInt(getPreferences("setting","mode"));
     }
 
     @Override
@@ -73,18 +48,6 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
 
     public void parseSMS(SMSItem smsItem)
     {
-        //SMS 발신자가 아는 인간인가
-        ContactManager contactManager = new ContactManager(getApplicationContext());
-        ArrayList<PhoneBookItem> Contacts = contactManager.getContactList();
-        for(PhoneBookItem pbItem : Contacts)
-        {
-
-            if(pbItem.getPhoneNumber().replace("-","").equals(smsItem.getPhoneNum()))
-            {
-                smsItem.setDisplayName(pbItem.getDisplayName());
-            }
-        }
-
         display(smsItem.getTime(),smsItem.getDisplayName(),smsItem.getPhoneNum(),smsItem.getBody());
         //SMS를 진동으로 바꾸기만 하면 됨.
         //3개씩 끊어서 돌려주기?
@@ -239,59 +202,101 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
         //      제스처가 어떤가
         //      터치일때만
 
+
+
         if(DataManager.VibrateMode == 1) { //기존입력
-            if(Gesture) { // 터치인가?
+            if(Gesture) {
                 if (count == 0)
                     CurrentBraille = BrailleContent.get(count);
                 IsTouched = true;
+                binding.brailleText.setText(CurrentBraille);
                 parseBraille(false);
             }
-            else { //슬라이드였음
-                if (IsTouched) { //터치되었음을 체크
+            else {
+                if (IsTouched) {
                     CurrentBraille = BrailleContent.get(count);
                     parseBraille(true);
+                    binding.brailleText.setText(CurrentBraille);
                     count++;
-                    IsTouched = false;
-
+                    binding.BrailleChar.setText(Integer.toString(count));
+                    if (count >= BrailleContent.size()) {
+                        vibrator.vibrate(1000);
+                        count = 0;
+                    }
                 }
             }
         }
         else if(DataManager.VibrateMode == 2) //3점식
         {
             CurrentBraille = BrailleContent.get(count);
-            parseBraille(CurrentBraille);
+            char[] a = CurrentBraille.toCharArray();
+            for(char c : a)
+            {
+                int tmp = (int)c;
+                if(tmp==0)
+                {
+                    vibrator.vibrate(300);
+                }
+                else
+                {
+                    vibrator.vibrate(100);
+                }
+            }
             count++;
         }
         else //6점식
         {
             CurrentBraille = BrailleContent.get(count++)+BrailleContent.get(count);
-            parseBraille(CurrentBraille);
+            char[] a = CurrentBraille.toCharArray();
+            for(char c : a)
+            {
+                int tmp = (int)c;
+                if(tmp==0)
+                {
+                    vibrator.vibrate(300);
+                }
+                else
+                {
+                    vibrator.vibrate(100);
+                }
+            }
             count++;
-        }
-
-        binding.brailleText.setText(CurrentBraille);
-        binding.BrailleChar.setText(Integer.toString(count));
-
-        if (count >= BrailleContent.size()) {
-            vibrator.vibrate(500);
-            count = 0;
         }
     }
 
     public static void onTouch() //터치
     {
-        onVibrate(true);
+
     }
 
     public static void onFling() //쓸어내리기
     {
-        onVibrate(false);
+
     }
 
-    public static void parseBraille(String braille)
+    public static void parseBraille(boolean Mode, String braille)
     {
-        char[] c = braille.toCharArray();
-        vibrator.vibrate(((int)c[0]!=49) ? 50 : 100,((int)c[1]!=49) ? 50 : 100,((int)c[2]!=49) ? 50 : 100);
+        if(Mode) //3점식
+        {
+
+        }
+        else //6점식
+        {
+
+        }
+
+        for(char c : braille.toCharArray())
+        {
+            int tmp = (int)c;
+            if(tmp==0)
+            {
+                vibrator.vibrate(300);
+            }
+            else
+            {
+                vibrator.vibrate(100);
+            }
+        }
     }
 
     public static void parseBraille(boolean IsFling)
@@ -329,23 +334,6 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
                     break;
             }
         }
-    }
-
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-        //using tracker variable to set Screen Name
-        mTracker.setScreenName("ReceiveActivity");
-        //sending the screen to analytics using ScreenViewBuilder() method
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
-    }
-
-    @Override
-    protected void onPause() //홈버튼 눌렀거나 뭘 위로 올리면 Activity 꺼버림
-    {
-        super.onPause();
-        finishAffinity();
     }
 
     @Override
@@ -394,10 +382,6 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
         if (Math.abs(e1.getX() - e2.getX()) < 250 && (e1.getY() - e2.getY() > 0)) {
             //위로 드래그
             ReceiveActivity.onFling();
-        }
-        else if (Math.abs(e1.getX() - e2.getX()) > 250 && (e1.getY() - e2.getY() > 0) && (e1.getX() - e2.getX()) < 0 ) //오른쪽 위로 슬라이드
-        {
-            ttsManager.speak(binding.body.getText().toString());
         }
         return true;
     }
