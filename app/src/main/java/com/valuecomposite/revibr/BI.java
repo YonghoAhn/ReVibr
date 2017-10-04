@@ -37,7 +37,11 @@ public class BI {
     private static char jongsung                         = ' ';
     //
     private static String currentBraille                  = "";
-    //
+    /*
+       Braille Converter
+     */
+    private static BrailleConverter brailleConverter = new BrailleConverter();
+
 
     public static void Input(boolean gesture)
     {
@@ -65,34 +69,77 @@ public class BI {
         }
     }
 
-    private static void EmptyComposition()
+    private static boolean EmptyComposition()
     {
         if(currentBraille.equals(ENGLISH_TAG))
         {
-
+            stateFlag = FLAG_ENGLISH;
+            return true;
         }
         else if(currentBraille.equals(NUMBER_TAG))
         {
-
+            stateFlag = FLAG_NUMBER;
+            return true;
         }
         else
         {
             HangulComposition();
+            return true;
         }
     }
 
-    private static void HangulComposition()
+    private static boolean HangulComposition()
     {
-        
+        if(currentBraille.equals(DOUBLE_CHOSUNG_TAG))//쌍자음 태그라면
+        {
+            DoubleChosung();
+        }
+
+        int pos = brailleConverter.getHangulPosition(currentBraille);
+        switch(pos)
+        {
+            case 1://Chosung
+                break;
+            case 2://Joongsung
+                break;
+            case 3://Jongsung
+                break;
+        }
+        return true;
     }
 
-    private static void EnglishComposition()
+    private static boolean DoubleChosung()
     {
-
+        return true;
     }
 
-    private static void NumberComposition()
+    private static boolean EnglishComposition() //English
     {
+        char c = brailleConverter.getEnglishCharacter(currentBraille);
+        if(c == ' ') return false;
+        SendActivity.AddChosung("" + c);
+        return true;
+    }
 
+    private static boolean NumberComposition() //Numeric
+    {
+        char c = brailleConverter.getNumericCharacter(currentBraille);
+        if(c == ' ') return false;
+        SendActivity.AddChosung("" + c);
+        return true;
+    }
+
+    public static void Flush(boolean clearDoubleChosung)
+    {
+        chosung = ' ';
+        joongsung = ' ';
+        jongsung = ' ';
+        if(clearDoubleChosung)
+            doubleChosungFlag = false;
+    }
+
+    public static void KimJohnSoo()
+    {
+        System.out.println("KimJohnSoo");
     }
 }
