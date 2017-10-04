@@ -61,13 +61,13 @@ public class BI {
         }
         else if(stateFlag == FLAG_NUMBER) //숫자모드
         {
-            
+            NumberComposition();
         }
     }
 
     private static void EmptyComposition()
     {
-
+        HangulComposition();
     }
 
     private static void HangulComposition()
