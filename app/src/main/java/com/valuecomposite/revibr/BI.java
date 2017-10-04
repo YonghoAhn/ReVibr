@@ -67,7 +67,18 @@ public class BI {
 
     private static void EmptyComposition()
     {
-        HangulComposition();
+        if(currentBraille.equals(ENGLISH_TAG))
+        {
+
+        }
+        else if(currentBraille.equals(NUMBER_TAG))
+        {
+
+        }
+        else
+        {
+            HangulComposition();
+        }
     }
 
     private static void HangulComposition()
