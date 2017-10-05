@@ -1,8 +1,8 @@
 package com.valuecomposite.revibr;
 
-import android.app.PendingIntent;
-
-import static com.valuecomposite.revibr.BI.FLAG.*;
+import static com.valuecomposite.revibr.BI.FLAG.FLAG_EMPTY;
+import static com.valuecomposite.revibr.BI.FLAG.FLAG_ENGLISH;
+import static com.valuecomposite.revibr.BI.FLAG.FLAG_NUMBER;
 
 /**
  * Created by anyongho on 2017. 10. 3..
@@ -10,14 +10,6 @@ import static com.valuecomposite.revibr.BI.FLAG.*;
 
 //Temp
 public class BI {
-    enum FLAG{
-        FLAG_EMPTY,
-        FLAG_HANGUL,
-        FLAG_ENGLISH,
-        FLAG_NUMBER
-    }
-    private static FLAG stateFlag = FLAG_EMPTY;
-
     //Static Braille Flags
     //English
     private static final String ENGLISH_TAG         = "001011";
@@ -27,6 +19,7 @@ public class BI {
     private static final String DOUBLE_CHOSUNG_TAG  = "000001";
     //
     private static final String SPACE               = "000000";
+    private static FLAG stateFlag = FLAG_EMPTY;
     /*
     Braille Variables
     */
@@ -61,11 +54,13 @@ public class BI {
             Composition();
         }
     }
+
     /*
         자소단위로 제거합니다.
     */
     public static int Delete()
     {
+        latestCharacter -= 1; //어차피 이게 0되면 -1 리턴돼서 ㄱㅊ
         if(jongsung!=' ') {
             jongsung = ' ';
             return 0;
@@ -82,6 +77,7 @@ public class BI {
             return -1;
         }
     }
+
     /*
         이전 글자를 넘겨주고 자소 한 개를 제거합니다.
     */
@@ -92,9 +88,11 @@ public class BI {
             return -1;
         char[] chars = HangulSupport.HangulAlphabet(beforeChar);
         chosung = chars[0]; joongsung = chars[1]; jongsung = chars[2]; //초 중 종성 등록해줌
+        latestCharacter = chars[2] != ' ' ? 3 : 2; //최근 입력된 글자를 변경해줌
         Delete(); //한번 호출해서 지워줌
         return 0;
     }
+
     //
     private static void Composition()
     {
@@ -199,13 +197,32 @@ public class BI {
         {
             //종성이면 초기화해주고, 초성을 ㅇ처리해야함
             Flush(true);
-        }
-        else if(latestCharacter == 2)
+        } else if (latestCharacter == 2) //가장 최근에 입력한 글자가 중성이었음 : 이게 특수중성 입력인지, 아니면 걍 새 글자 시작인지 체크해서 특수 중성이 아니라면 새 글자로 인식, 초성 ㅇ의 새로운 글자를 입력한다
         {
-
+            if (c == 'ㅐ') //특수 모음 처리
+            {
+                switch (joongsung) {
+                    case 'ㅜ':
+                        joongsung = 'ㅟ';
+                        break;
+                    case 'ㅑ':
+                        joongsung = 'ㅒ';
+                        break;
+                    case 'ㅘ':
+                        joongsung = 'ㅙ';
+                        break;
+                    case 'ㅝ':
+                        joongsung = 'ㅞ';
+                        break;
+                    case ' ':
+                        joongsung = 'ㅐ';
+                        break;
+                }
+            } else //특수 중성 입력이 아님
+            {
+                Flush(true);
+            }
         }
-
-
         if(doubleChosungFlag && chosung == ' ') //쌍자음 플래그가 서있다 && 초성이 비었다
         {
             chosung = 'ㅅ'; //초성이 ㅅ임
@@ -215,36 +232,80 @@ public class BI {
             chosung = 'ㅇ'; //초성을 ㅇ으로
         }
         //Composition Chosung + Joongsung
-        //if c = 'ㅐ' and joongsung is already exist, conf it
-        if(c == 'ㅐ') //특수 모음 처리
-        {
-            switch(joongsung)
-            {
-                case 'ㅜ':
-                    joongsung = 'ㅟ';
-                    break;
-                case 'ㅑ':
-                    joongsung = 'ㅒ';
-                    break;
-                case 'ㅘ':
-                    joongsung = 'ㅙ';
-                    break;
-                case 'ㅝ':
-                    joongsung = 'ㅞ';
-                    break;
-                case ' ':
-                    joongsung = 'ㅐ';
-                    break;
-            }
-        }
+        char result = HangulSupport.CombineHangul(new char[]{chosung, joongsung});
+        SendActivity.AddText("" + result);
         latestCharacter = 2;
         return true;
     }
 
+    //종성 합성
     private static boolean JongsungComposition()
     {
+        if (joongsung == ' ') return false;
+        char c = brailleConverter.getHangulCharacter(currentBraille);
+        if (jongsung != ' ' && latestCharacter == 3) {
+            jongsung = MultipleJongsungComposition(c);
+        }
+        String result = "" + HangulSupport.CombineHangul(new char[]{chosung, joongsung, jongsung});
+        SendActivity.AddText(result);
+        //겹종성 처리를 하거나
+        //걍 종성을 넣거나
+        //모음이 없다면, 무시해야
         latestCharacter = 3;
         return true;
+    }
+
+    //중복 종성 합성 및 리턴
+    private static char MultipleJongsungComposition(char c) {
+        String str = "" + jongsung + c;
+        switch (str) {
+            case "ㄱㄱ":
+                c = 'ㄲ';
+                break;
+            case "ㄷㄷ":
+                c = 'ㄲ';
+                break;
+            case "ㄱㅅ":
+                c = 'ㄳ';
+                break;
+            case "ㄴㅈ":
+                c = 'ㄵ';
+                break;
+            case "ㄴㅎ":
+                c = 'ㄶ';
+                break;
+            case "ㄹㄱ":
+                c = 'ㄺ';
+                break;
+            case "ㄹㅁ":
+                c = 'ㄻ';
+                break;
+            case "ㄹㅂ":
+                c = 'ㄼ';
+                break;
+            case "ㄹㅅ":
+                c = 'ㄽ';
+                break;
+            case "ㄹㅌ":
+                c = 'ㄾ';
+                break;
+            case "ㄹㅍ":
+                c = 'ㄿ';
+                break;
+            case "ㄹㅎ":
+                c = 'ㅀ';
+                break;
+            case "ㅂㅅ":
+                c = 'ㅄ';
+                break;
+            case "ㅅㅅ":
+                c = 'ㅆ';
+                break;
+            default:
+                //SendMessageActivity.addLastText(_jongsung);
+                return ' ';
+        }
+        return c;
     }
 
     private static boolean EnglishComposition() //English
@@ -275,5 +336,12 @@ public class BI {
     public static void KimJohnSoo()
     {
         System.out.println("KimJohnSoo");
+    }
+
+    enum FLAG {
+        FLAG_EMPTY,
+        FLAG_HANGUL,
+        FLAG_ENGLISH,
+        FLAG_NUMBER
     }
 }
