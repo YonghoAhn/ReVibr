@@ -25,18 +25,17 @@ import java.util.ArrayList;
 import static com.valuecomposite.revibr.DataManager.mContext;
 import static com.valuecomposite.revibr.PhoneBook.GESTURE_LIMIT;
 import static com.valuecomposite.revibr.PhoneBook.ZERO;
-import static com.valuecomposite.revibr.PhoneBook.binding;
 
 /**
  * Created by ayh07 on 8/12/2017.
  */
 
 public class SendActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
-    BroadcastReceiver receiver = new BroadcastReceiver();
-    static ActivitySendBinding binding;
-    private GestureDetectorCompat gDetector;
-    private static String smsNum = "";
     public static int count = 0;
+    static ActivitySendBinding binding;
+    private static String smsNum = "";
+    BroadcastReceiver receiver = new BroadcastReceiver();
+    private GestureDetectorCompat gDetector;
     private Tracker mTracker;
     private Intent intent;
     private SpeechRecognizer mRecognizer;
@@ -76,6 +75,49 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
         }
 
     };
+
+    public static void AddText(String s) {
+        String t = binding.txtSend.getText().toString();
+        binding.txtSend.setText(t.substring(0, t.length() - 1) + s);
+    }
+
+    public static void AddChosung(String s) {
+        binding.txtSend.setText(binding.txtSend.getText() + s);
+    }
+
+    private static void sendSMS(String s) {
+        String smsText = s;
+        if (smsNum.length() > 0 && smsText.length() > 0) {
+            sendSMS(smsNum, smsText);
+            binding.txtSend.setText("");
+            Toast.makeText(mContext, "전송됨", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(mContext, "비었습니다.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private static void sendSMS(String smsNum, String smsText) {
+        PendingIntent sentIntent = PendingIntent.getBroadcast(mContext, 0, new Intent("SMS_SENT_ACTION"), 0);
+        PendingIntent deliverIntent = PendingIntent.getBroadcast(mContext, 0, new Intent("SMS_DELIVERED_ACTION"), 0);
+        SmsManager mSmsManager = SmsManager.getDefault();
+        mSmsManager.sendTextMessage(smsNum, null, smsText, sentIntent, deliverIntent);
+    }
+
+    public static void clearColor() {
+        binding.idxOne.setBackground(ContextCompat.getDrawable(mContext, R.drawable.roundtext));
+        binding.idxTwo.setBackground(ContextCompat.getDrawable(mContext, R.drawable.roundtext));
+        binding.idxThree.setBackground(ContextCompat.getDrawable(mContext, R.drawable.roundtext));
+        binding.idxFour.setBackground(ContextCompat.getDrawable(mContext, R.drawable.roundtext));
+        binding.idxFive.setBackground(ContextCompat.getDrawable(mContext, R.drawable.roundtext));
+        binding.idxSix.setBackground(ContextCompat.getDrawable(mContext, R.drawable.roundtext));
+
+    }
+
+    public static void Delete() {
+        binding.txtSend.setText(binding.txtSend.getText().toString().substring(0, binding.txtSend.getText().length() - 1));
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -153,12 +195,9 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
             //왼쪽 드래그
             Toast.makeText(mContext, "LEFT", Toast.LENGTH_SHORT).show();
             // 지우기 코드
-            try {
-                binding.txtSend.setText(binding.txtSend.getText().toString().substring(0, binding.txtSend.getText().toString().length() - 1));
-                BrailleInput.flush();
-            }
-            catch (Exception e)
-            {  }
+            Delete();
+            BrailleInput.Delete();
+
         } else if (Math.abs(e1.getY() - e2.getY()) < GESTURE_LIMIT && (e2.getX() - e1.getX() > ZERO)) {
             //오른쪽 드래그
             Toast.makeText(mContext, "RIGHT", Toast.LENGTH_SHORT).show();
@@ -170,57 +209,13 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
         } else if ((e1.getX() - e2.getX() > 0) && (e1.getY() - e2.getY() > 0)) {
             //왼쪽 위 대각선 드래그
             Toast.makeText(getApplicationContext(), "message sending activity", Toast.LENGTH_SHORT).show();
-            BrailleInput.flush();
+            BrailleInput.Flush(true);
             finish();
             //뒤로 돌아가기 코드
         } else {
             Toast.makeText(mContext, "ignore", Toast.LENGTH_SHORT).show();
         }
         return true;
-    }
-
-    public static void AddText(String s)
-    {
-        String t = binding.txtSend.getText().toString();
-        binding.txtSend.setText(t.substring(0,t.length()-1) + s);
-    }
-
-    public static void AddChosung(String s)
-    {
-        binding.txtSend.setText(binding.txtSend.getText() + s);
-    }
-
-    private static void sendSMS(String s)
-    {
-        String smsText = s;
-        if(smsNum.length() > 0 && smsText.length() > 0)
-        {
-            sendSMS(smsNum, smsText);
-            binding.txtSend.setText("");
-            Toast.makeText(mContext,"전송됨",Toast.LENGTH_SHORT).show();
-        }
-        else
-        {
-            Toast.makeText(mContext,"비었습니다.",Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private static void sendSMS(String smsNum, String smsText) {
-        PendingIntent sentIntent = PendingIntent.getBroadcast(mContext,0,new Intent("SMS_SENT_ACTION"),0);
-        PendingIntent deliverIntent = PendingIntent.getBroadcast(mContext,0,new Intent("SMS_DELIVERED_ACTION"),0);
-        SmsManager mSmsManager = SmsManager.getDefault();
-        mSmsManager.sendTextMessage(smsNum,null,smsText,sentIntent,deliverIntent);
-    }
-
-    public static void clearColor()
-    {
-        binding.idxOne.setBackground(ContextCompat.getDrawable(mContext,R.drawable.roundtext));
-        binding.idxTwo.setBackground(ContextCompat.getDrawable(mContext,R.drawable.roundtext));
-        binding.idxThree.setBackground(ContextCompat.getDrawable(mContext,R.drawable.roundtext));
-        binding.idxFour.setBackground(ContextCompat.getDrawable(mContext,R.drawable.roundtext));
-        binding.idxFive.setBackground(ContextCompat.getDrawable(mContext,R.drawable.roundtext));
-        binding.idxSix.setBackground(ContextCompat.getDrawable(mContext,R.drawable.roundtext));
-
     }
 
     private void colorIdentify(int idx, boolean gesture)
