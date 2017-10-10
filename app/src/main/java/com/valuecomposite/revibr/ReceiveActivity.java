@@ -1,7 +1,9 @@
 package com.valuecomposite.revibr;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Debug;
+import android.provider.ContactsContract;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -30,6 +32,11 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
     static boolean isNumeric = false;
     static BrailleConverter BC = new BrailleConverter();
 
+    public String getPreferences(String key, String subkey){
+        SharedPreferences pref = getSharedPreferences(key, MODE_PRIVATE);
+        return pref.getString(subkey, "");
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +55,15 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
 
     public void parseSMS(SMSItem smsItem)
     {
+        ContactManager contactManager = new ContactManager(getApplicationContext());
+        DataManager.PBItems = contactManager.getContactList();
+        for(PhoneBookItem phoneBookItem : DataManager.PBItems)
+        {
+            if(phoneBookItem.getPhoneNumber().toString().replace("-","").equals(smsItem.getPhoneNum()))
+                smsItem.setDisplayName(phoneBookItem.getDisplayName().toString());
+        }
         display(smsItem.getTime(),smsItem.getDisplayName(),smsItem.getPhoneNum(),smsItem.getBody());
+
         //SMS를 진동으로 바꾸기만 하면 됨.
         //3개씩 끊어서 돌려주기?
         char[] chars = smsItem.getBody().toCharArray();
@@ -206,97 +221,52 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
 
         if(DataManager.VibrateMode == 1) { //기존입력
             if(Gesture) {
-                if (count == 0)
-                    CurrentBraille = BrailleContent.get(count);
-                IsTouched = true;
-                binding.brailleText.setText(CurrentBraille);
-                parseBraille(false);
-            }
-            else {
-                if (IsTouched) {
-                    CurrentBraille = BrailleContent.get(count);
-                    parseBraille(true);
-                    binding.brailleText.setText(CurrentBraille);
-                    count++;
+                if (!IsTouched) {
                     binding.BrailleChar.setText(Integer.toString(count));
+                    CurrentBraille = BrailleContent.get(count);
+                    binding.brailleText.setText(CurrentBraille);
+                    IsTouched = true;
+                    parseBraille(false);
                     if (count >= BrailleContent.size()) {
                         vibrator.vibrate(1000);
                         count = 0;
                     }
                 }
             }
-        }
-        else if(DataManager.VibrateMode == 2) //3점식
-        {
-            CurrentBraille = BrailleContent.get(count);
-            char[] a = CurrentBraille.toCharArray();
-            for(char c : a)
-            {
-                int tmp = (int)c;
-                if(tmp==0)
-                {
-                    vibrator.vibrate(300);
-                }
-                else
-                {
-                    vibrator.vibrate(100);
+            else {
+                if (IsTouched) {
+                    parseBraille(true);
+                    binding.BrailleChar.setText(Integer.toString(++count));
+                    IsTouched = false;
+                    }
                 }
             }
-            count++;
-        }
-        else //6점식
-        {
-            CurrentBraille = BrailleContent.get(count++)+BrailleContent.get(count);
-            char[] a = CurrentBraille.toCharArray();
-            for(char c : a)
+
+        else {
+
+            if (DataManager.VibrateMode == 2) //3점식
             {
-                int tmp = (int)c;
-                if(tmp==0)
-                {
-                    vibrator.vibrate(300);
-                }
-                else
-                {
-                    vibrator.vibrate(100);
-                }
+                CurrentBraille = BrailleContent.get(count++);
+                char[] chars = CurrentBraille.toCharArray();
+                vibrator.vibrate((chars[0] == '0' ? 100 : 300), (chars[1] == '0' ? 100 : 300), (chars[2] == '0' ? 100 : 300));
             }
-            count++;
+            else //6점식
+            {
+                CurrentBraille = BrailleContent.get(count++) + BrailleContent.get(count++);
+                char[] chars = CurrentBraille.toCharArray();
+                vibrator.vibrate((chars[0] == '0' ? 100 : 300), (chars[1] == '0' ? 100 : 300), (chars[2] == '0' ? 100 : 300), (chars[3] == '0' ? 100 : 300), (chars[4] == '0' ? 100 : 300), (chars[5] == '0' ? 100 : 300));
+            }
         }
     }
 
     public static void onTouch() //터치
     {
-
+        onVibrate(true);
     }
 
     public static void onFling() //쓸어내리기
     {
-
-    }
-
-    public static void parseBraille(boolean Mode, String braille)
-    {
-        if(Mode) //3점식
-        {
-
-        }
-        else //6점식
-        {
-
-        }
-
-        for(char c : braille.toCharArray())
-        {
-            int tmp = (int)c;
-            if(tmp==0)
-            {
-                vibrator.vibrate(300);
-            }
-            else
-            {
-                vibrator.vibrate(100);
-            }
-        }
+        onVibrate(false);
     }
 
     public static void parseBraille(boolean IsFling)
@@ -379,8 +349,8 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float v, float v1) {
-        if (Math.abs(e1.getX() - e2.getX()) < 250 && (e1.getY() - e2.getY() > 0)) {
-            //위로 드래그
+        if (Math.abs(e1.getX() - e2.getX()) < 250 && (e1.getY() - e2.getY() > 0) || (Math.abs(e1.getX() - e2.getX()) < 250 && (e2.getY() - e1.getY() > 0))) {
+            //위/아래로 드래그
             ReceiveActivity.onFling();
         }
         return true;

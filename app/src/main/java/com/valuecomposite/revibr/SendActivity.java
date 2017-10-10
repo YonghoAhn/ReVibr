@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.Toast;
@@ -37,6 +38,8 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
     BroadcastReceiver receiver = new BroadcastReceiver();
     private GestureDetectorCompat gDetector;
     private Tracker mTracker;
+    static Vibrator vibrator;
+    static TTSManager ttsManager;
     private Intent intent;
     private SpeechRecognizer mRecognizer;
     private RecognitionListener listener = new RecognitionListener() {
@@ -72,6 +75,8 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
             String[] rs = new String[mResult.size()];
             mResult.toArray(rs);
             binding.txtSend.setText(""+rs[0]);
+            vibrator.vibrate(500); //Listen Completed
+            ttsManager.speak(binding.txtSend.getText().toString()); //뭐가 입력됐는지 읽어줌
         }
 
     };
@@ -114,8 +119,12 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
     }
 
     public static void Delete() {
-        binding.txtSend.setText(binding.txtSend.getText().toString().substring(0, binding.txtSend.getText().length() - 1));
-
+        try {
+            binding.txtSend.setText(binding.txtSend.getText().toString().substring(0, binding.txtSend.getText().length() - 1));
+        } catch (Exception e)
+        {
+          Log.d("MisakaMOE",e.getMessage());
+        }
     }
 
     @Override
@@ -128,13 +137,13 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
         smsNum = getIntent.getExtras().getString("number");
         ApplicationController application = (ApplicationController) getApplication();
         mTracker = application.getDefaultTracker();
-
+        vibrator = new Vibrator(getApplicationContext());
+        ttsManager = new TTSManager(getApplicationContext());
         intent =  new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ko-KR");
         mRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         mRecognizer.setRecognitionListener(listener);
-        mRecognizer.startListening(intent);
     }
 
     @Override
@@ -205,7 +214,8 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
             sendSMS(binding.txtSend.getText().toString());
         } else if ((e2.getX() - e1.getX() > ZERO) && (e2.getY() - e1.getY() > ZERO)) {
             //오른쪽 아래 대각선 드래그
-            //Toast.makeText(getApplicationContext(), "message sending activity", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "message sending activity", Toast.LENGTH_SHORT).show();
+            mRecognizer.startListening(intent);
         } else if ((e1.getX() - e2.getX() > 0) && (e1.getY() - e2.getY() > 0)) {
             //왼쪽 위 대각선 드래그
             Toast.makeText(getApplicationContext(), "message sending activity", Toast.LENGTH_SHORT).show();

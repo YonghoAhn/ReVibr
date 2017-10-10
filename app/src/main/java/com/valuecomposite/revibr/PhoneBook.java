@@ -30,10 +30,8 @@ import static com.valuecomposite.revibr.DataManager.mContext;
  */
 
 public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener{
-    BroadcastReceiver receiver = new com.valuecomposite.revibr.BroadcastReceiver();
     static ActivityPhonebookBinding binding;
     private GestureDetectorCompat gDetector;
-    LinearLayout gestureOverlay;
     TTSManager ttsManager;
     static final int ZERO = 0;
     static final int GESTURE_LIMIT = 250;
@@ -73,11 +71,25 @@ public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGe
 
     }
 
+    public String getPreferences(String key, String subkey){
+        SharedPreferences pref = getSharedPreferences(key, MODE_PRIVATE);
+        return pref.getString(subkey, "");
+    }
+
+    public void savePreferences(String key, String subkey, String content){
+        SharedPreferences pref = getSharedPreferences(key, MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(subkey, content);
+        editor.commit();
+    }
+
     public void Initialize()
     {
         ContactManager contactManager = new ContactManager(getApplicationContext());
         DataManager.PBItems = contactManager.getContactList();
         ttsManager = new TTSManager(getApplicationContext());
+        if(getPreferences("setting","mode").equals(""))
+            savePreferences("setting","mode","1");
         PBDisplay(0);
     }
 

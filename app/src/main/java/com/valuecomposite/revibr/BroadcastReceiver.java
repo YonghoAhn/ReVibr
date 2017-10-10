@@ -42,6 +42,7 @@ public class BroadcastReceiver extends android.content.BroadcastReceiver {
             //SMS 수신 번호가 등록된 사람인가?
             String person = "모르는 번호";
 
+
             //SMS 수신 메세지
             String message = smsMessage[0].getMessageBody().toString();
 
@@ -56,14 +57,9 @@ public class BroadcastReceiver extends android.content.BroadcastReceiver {
         else if(action.equals(Intent.ACTION_HEADSET_PLUG))
         {
             int state = intent.getIntExtra("state", -1);
-            if(state == 1) //Earphone attached
-            {
-                DataManager.IsEarphoneConnected = true;
-            }
-            else //Earphone dettached
-            {
-                DataManager.IsEarphoneConnected = false;
-            }
+            //Earphone attached
+            //Earphone dettached
+            DataManager.IsEarphoneConnected = state == 1;
         }
         else if (action.equals("SMS_SENT_ACTION")) {
             switch (getResultCode()) {
