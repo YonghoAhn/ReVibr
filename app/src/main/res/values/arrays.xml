@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="setting">
-        <item>1점식</item>
+        <item>터치드래그식</item>
         <item>3점식</item>
         <item>6점식</item>
+        <item>1점식</item>
     </string-array>
 </resources>

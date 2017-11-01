@@ -47,6 +47,9 @@ public class OptionActivity extends AppCompatActivity {
             case '3':
                 binding.Optspinner.setSelection(2);
                 break;
+            case '4':
+                binding.Optspinner.setSelection(3);
+                break;
         }
         binding.Optspinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() { //아이템 변경 리스너
             @Override
@@ -64,6 +67,10 @@ public class OptionActivity extends AppCompatActivity {
                     case 2:
                         DataManager.VibrateMode = 3;
                         savePreferences("setting","mode","3");
+                        break;
+                    case 3:
+                        DataManager.VibrateMode = 4;
+                        savePreferences("setting","mode","4");
                         break;
                 }
             }

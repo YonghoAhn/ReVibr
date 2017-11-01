@@ -30,18 +30,18 @@ public class Vibrator {
 
     public void vibrate(int millisecond, int millisecond2)
     {
-        long[] pattern = new long[]{0,millisecond,50, millisecond2};
+        long[] pattern = new long[]{0,millisecond,150, millisecond2};
         m_Vibrator.vibrate(pattern,-1);
     }
 
     public void vibrate(int millisecond, int millisecond2, int millisecond3)
     {
-        long[] pattern = new long[]{0,millisecond,50, millisecond2,50,millisecond3};
+        long[] pattern = new long[]{0,millisecond,150, millisecond2,150,millisecond3};
         m_Vibrator.vibrate(pattern,-1);
     }
 
     public void vibrate(int i, int i1, int i2, int i3, int i4, int i5) {
-        long[] pattern = new long[]{0,i,50, i1,50,i2,50,i3,50,i4,50,i5};
+        long[] pattern = new long[]{0,i,150, i1,150,i2,150,i3,150,i4,150,i5};
         m_Vibrator.vibrate(pattern,-1);
     }
 }

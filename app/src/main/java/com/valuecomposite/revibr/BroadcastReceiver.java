@@ -23,7 +23,7 @@ public class BroadcastReceiver extends android.content.BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Bundle bundle = intent.getExtras();
         String action = intent.getAction();
-        if(action.equals("android.provider.Telephony.SMS_RECEIVED"))
+        if(action.equals("android.provider.Telephony.SMS_RECEIVED") || action.equals("android.provider.Telephony.SMS_DELIVER"))
         {
             Object messages[] = (Object[])bundle.get("pdus");
             SmsMessage smsMessage[] = new SmsMessage[messages.length];

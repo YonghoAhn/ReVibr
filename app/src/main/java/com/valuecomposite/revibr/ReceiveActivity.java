@@ -26,15 +26,24 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
     static boolean IsTouched = false;
     static ArrayList<String> BrailleContent = new ArrayList<>();
     private static int count = 0;
+    private static int sub_count = 0;
     static String CurrentBraille = "";
     static Vibrator vibrator;
     static boolean isEnglish = false;
     static boolean isNumeric = false;
     static BrailleConverter BC = new BrailleConverter();
+    static TTSManager ttsManager;
 
     public String getPreferences(String key, String subkey){
         SharedPreferences pref = getSharedPreferences(key, MODE_PRIVATE);
         return pref.getString(subkey, "");
+    }
+
+    public void savePreferences(String key, String subkey, String content){
+        SharedPreferences pref = getSharedPreferences(key, MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(subkey, content);
+        editor.commit();
     }
 
     @Override
@@ -44,7 +53,26 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
         binding = DataBindingUtil.setContentView(this, R.layout.activity_receive);
         gestureDetector = new GestureDetector(this, this);
         vibrator = new Vibrator(getApplicationContext());
+        ttsManager = new TTSManager(getApplicationContext());
         parseSMS(DataManager.CurrentSMS);
+
+        if(getPreferences("setting","mode").equals(""))
+            savePreferences("setting","mode","1");
+        switch (getPreferences("setting","mode").toCharArray()[0]) //설정된 데이터를 바인딩
+        {
+            case '1':
+                DataManager.VibrateMode = 1;
+                break;
+            case '2':
+                DataManager.VibrateMode = 2;
+                break;
+            case '3':
+                DataManager.VibrateMode = 3;
+                break;
+            case '4':
+                DataManager.VibrateMode = 4;
+                break;
+        }
     }
 
     @Override
@@ -192,7 +220,7 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
             catch(Exception e)
             {
                 Log.d("MisakaMOE","Error is " + e.getMessage().toString());
-                Toast.makeText(getApplicationContext(),e.getMessage().toString(),Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(),e.getMessage().toString(),Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -218,44 +246,63 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
         //      터치일때만
 
 
+        try {
+            if (DataManager.VibrateMode == 1) { //기존입력
+                if (Gesture) {
+                    if (!IsTouched) {
+                        binding.BrailleChar.setText(Integer.toString(count));
+                        CurrentBraille = BrailleContent.get(count);
+                        binding.brailleText.setText(CurrentBraille);
+                        IsTouched = true;
+                        parseBraille(false);
+                    }
+                } else {
+                    if (IsTouched) {
+                        parseBraille(true);
+                        binding.BrailleChar.setText(Integer.toString(++count));
+                        IsTouched = false;
+                    }
+                }
+            } else {
 
-        if(DataManager.VibrateMode == 1) { //기존입력
-            if(Gesture) {
-                if (!IsTouched) {
-                    binding.BrailleChar.setText(Integer.toString(count));
-                    CurrentBraille = BrailleContent.get(count);
+                if (DataManager.VibrateMode == 2) //3점식
+                {
+                    CurrentBraille = BrailleContent.get(count++);
                     binding.brailleText.setText(CurrentBraille);
-                    IsTouched = true;
-                    parseBraille(false);
-                    if (count >= BrailleContent.size()) {
-                        vibrator.vibrate(1000);
-                        count = 0;
-                    }
-                }
-            }
-            else {
-                if (IsTouched) {
-                    parseBraille(true);
-                    binding.BrailleChar.setText(Integer.toString(++count));
-                    IsTouched = false;
-                    }
-                }
-            }
+                    char[] chars = CurrentBraille.toCharArray();
+                    vibrator.vibrate((chars[0] == '0' ? 100 : 300), (chars[1] == '0' ? 100 : 300), (chars[2] == '0' ? 100 : 300));
+                } else if (DataManager.VibrateMode == 3) //6점식
+                {
+                    CurrentBraille = BrailleContent.get(count++) + BrailleContent.get(count++);
+                    binding.brailleText.setText(CurrentBraille);
+                    char[] chars = CurrentBraille.toCharArray();
+                    vibrator.vibrate((chars[0] == '0' ? 100 : 300), (chars[1] == '0' ? 100 : 300), (chars[2] == '0' ? 100 : 300), (chars[3] == '0' ? 100 : 300), (chars[4] == '0' ? 100 : 300), (chars[5] == '0' ? 100 : 300));
+                } else if (DataManager.VibrateMode == 4) //1점식
+                {
+                    //3점식 베이스에 따로 카운트 올려서 계산한다.
+                    //보조카운트++ 해서 3되면 카운트 1 올리기
 
-        else {
+                    if (sub_count == 3 && count < BrailleContent.size()) {
+                        sub_count = 0; //0,1,2 되면 0으로 바꿈
+                        count++; //카운트 올림
+                        CurrentBraille = BrailleContent.get(count);
+                        binding.brailleText.setText(CurrentBraille);//현재 점자 교체
+                        binding.BrailleChar.setText(Integer.toString(count));
+                    }
+                    if (count == 0) {
+                        CurrentBraille = BrailleContent.get(count);
+                        binding.brailleText.setText(CurrentBraille);//현재 점자 교체
+                        binding.BrailleChar.setText(Integer.toString(count));
+                    }
+                    char[] chars = CurrentBraille.toCharArray(); //char 배열로 만듬
+                    vibrator.vibrate((chars[sub_count++] == '0' ? 100 : 300)); //한글자씩 올림 0->1->2->3
+                }
 
-            if (DataManager.VibrateMode == 2) //3점식
-            {
-                CurrentBraille = BrailleContent.get(count++);
-                char[] chars = CurrentBraille.toCharArray();
-                vibrator.vibrate((chars[0] == '0' ? 100 : 300), (chars[1] == '0' ? 100 : 300), (chars[2] == '0' ? 100 : 300));
             }
-            else //6점식
-            {
-                CurrentBraille = BrailleContent.get(count++) + BrailleContent.get(count++);
-                char[] chars = CurrentBraille.toCharArray();
-                vibrator.vibrate((chars[0] == '0' ? 100 : 300), (chars[1] == '0' ? 100 : 300), (chars[2] == '0' ? 100 : 300), (chars[3] == '0' ? 100 : 300), (chars[4] == '0' ? 100 : 300), (chars[5] == '0' ? 100 : 300));
-            }
+        }
+        catch(Exception e)
+        {
+            vibrator.vibrate(1000);
         }
     }
 
@@ -352,6 +399,10 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
         if (Math.abs(e1.getX() - e2.getX()) < 250 && (e1.getY() - e2.getY() > 0) || (Math.abs(e1.getX() - e2.getX()) < 250 && (e2.getY() - e1.getY() > 0))) {
             //위/아래로 드래그
             ReceiveActivity.onFling();
+        }
+        else if (Math.abs(e1.getX() - e2.getX()) > 250 && (e1.getY() - e2.getY() > 0) && (e1.getX() - e2.getX()) < 0 ) //오른쪽 위로 슬라이드
+        {
+            ttsManager.speak(binding.name.getText().toString() + " " + binding.body.getText().toString()); //이름 번호 말한다
         }
         return true;
     }
