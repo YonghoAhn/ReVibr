@@ -8,6 +8,8 @@
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:paddingTop="16dp"
+    android:weightSum="20"
+    android:background="#fff"
     >
         <TextView
             android:padding="5dp"
@@ -15,35 +17,43 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/roundtext"
+            android:textSize="18sp"
+            android:layout_weight="10"
+            android:textColor="#fff"
             android:hint="SMS MESSAGE" />
 
         <android.support.v4.widget.Space
             android:layout_width="match_parent"
-            android:layout_height="20dp" />
-
-        <TextView
-            android:padding="5dp"
-            android:background="@drawable/roundtext"
-            android:id="@+id/count"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="braille" />
+            android:layout_height="20dp"
+            android:layout_weight="0.5"
+            />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="9"
             android:weightSum="2">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:weightSum="3">
-
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    ></LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:weightSum="3">
                 <TextView
                     android:layout_margin="10dp"
-                    android:background="@drawable/roundtext"
+                    android:background="@drawable/circle_black"
                     android:id="@+id/idx_one"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
@@ -51,7 +61,7 @@
 
                 <TextView
                     android:layout_margin="10dp"
-                    android:background="@drawable/roundtext"
+                    android:background="@drawable/circle_white"
                     android:id="@+id/idx_two"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
@@ -59,23 +69,37 @@
 
                 <TextView
                     android:layout_margin="10dp"
-                    android:background="@drawable/roundtext"
+                    android:background="@drawable/circle_white"
                     android:id="@+id/idx_three"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"></TextView>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    ></LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:weightSum="3">
-
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_weight="1"></LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:weightSum="3"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
                 <TextView
                     android:layout_margin="10dp"
-                    android:background="@drawable/roundtext"
+                    android:background="@drawable/circle"
                     android:id="@+id/idx_four"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
@@ -83,7 +107,7 @@
 
                 <TextView
                     android:layout_margin="10dp"
-                    android:background="@drawable/roundtext"
+                    android:background="@drawable/circle"
                     android:id="@+id/idx_five"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
@@ -91,12 +115,21 @@
 
                 <TextView
                     android:layout_margin="10dp"
-                    android:background="@drawable/roundtext"
+                    android:background="@drawable/circle"
                     android:id="@+id/idx_six"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"></TextView>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_weight="1"></LinearLayout>
             </LinearLayout>
         </LinearLayout>
+    <android.support.v4.widget.Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_weight="0.5"
+        />
 </LinearLayout>
 </layout>

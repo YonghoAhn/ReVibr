@@ -41,7 +41,7 @@ public class Vibrator {
     }
 
     public void vibrate(int i, int i1, int i2, int i3, int i4, int i5) {
-        long[] pattern = new long[]{0,i,150, i1,150,i2,150,i3,150,i4,150,i5};
+        long[] pattern = new long[]{0,i,150, i1,150,i2,300,i3,150,i4,150,i5};
         m_Vibrator.vibrate(pattern,-1);
     }
 }

@@ -35,7 +35,6 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
     public static int count = 0;
     static ActivitySendBinding binding;
     private static String smsNum = "";
-    BroadcastReceiver receiver = new BroadcastReceiver();
     private GestureDetectorCompat gDetector;
     private Tracker mTracker;
     static Vibrator vibrator;
@@ -74,7 +73,7 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
             ArrayList<String> mResult = results.getStringArrayList(key);
             String[] rs = new String[mResult.size()];
             mResult.toArray(rs);
-            binding.txtSend.setText(""+rs[0]);
+            binding.txtSend.setText(binding.txtSend + " " +rs[0]);
             vibrator.vibrate(500); //Listen Completed
             ttsManager.speak(binding.txtSend.getText().toString()); //뭐가 입력됐는지 읽어줌
         }
@@ -109,21 +108,53 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
     }
 
     public static void clearColor() {
-        binding.idxOne.setBackground(ContextCompat.getDrawable(mContext, R.drawable.roundtext));
-        binding.idxTwo.setBackground(ContextCompat.getDrawable(mContext, R.drawable.roundtext));
-        binding.idxThree.setBackground(ContextCompat.getDrawable(mContext, R.drawable.roundtext));
-        binding.idxFour.setBackground(ContextCompat.getDrawable(mContext, R.drawable.roundtext));
-        binding.idxFive.setBackground(ContextCompat.getDrawable(mContext, R.drawable.roundtext));
-        binding.idxSix.setBackground(ContextCompat.getDrawable(mContext, R.drawable.roundtext));
+        binding.idxOne.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle));
+        binding.idxTwo.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle));
+        binding.idxThree.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle));
+        binding.idxFour.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle));
+        binding.idxFive.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle));
+        binding.idxSix.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle));
+    }
 
+    public static void setClearColor(int index)
+    {
+        switch(index)
+        {
+            case 1:
+                binding.idxOne.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle));
+                break;
+            case 2:
+                binding.idxTwo.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle));
+                break;
+            case 3:
+                binding.idxThree.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle));
+                break;
+            case 4:
+                binding.idxFour.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle));
+                break;
+            case 5:
+                binding.idxFive.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle));
+                break;
+            case 6:
+                binding.idxSix.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle));
+                break;
+        }
     }
 
     public static void Delete() {
-        try {
-            binding.txtSend.setText(binding.txtSend.getText().toString().substring(0, binding.txtSend.getText().length() - 1));
-        } catch (Exception e)
+        if(BrailleInput.Delete() == -1)
+        { //Motion Delete, and its failed, we should remove character{
+            try {
+                binding.txtSend.setText(binding.txtSend.getText().toString().substring(0, binding.txtSend.getText().length() - 1));
+            }
+            catch (Exception e)
+            {
+                Log.d("MisakaMOE",e.getMessage());
+            }
+        }
+        else
         {
-          Log.d("MisakaMOE",e.getMessage());
+
         }
     }
 
@@ -144,6 +175,8 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ko-KR");
         mRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         mRecognizer.setRecognitionListener(listener);
+        BrailleInput.Initialize();
+
     }
 
     @Override
@@ -154,6 +187,7 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
         mTracker.setScreenName("PhoneBookActivity");
         //sending the screen to analytics using ScreenViewBuilder() method
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
     }
 
     @Override
@@ -194,18 +228,20 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
             //위로 드래그
             Toast.makeText(mContext, "UP", Toast.LENGTH_SHORT).show();
             colorIdentify(count,true);
+            vibrator.vibrate(300);
             BrailleInput.Input(true);
         } else if (Math.abs(e1.getX() - e2.getX()) < GESTURE_LIMIT && (e2.getY() - e1.getY() > ZERO)) {
             //아래로 드래그
             Toast.makeText(mContext, "DOWN", Toast.LENGTH_SHORT).show();
             colorIdentify(count,false);
+            vibrator.vibrate(100);
             BrailleInput.Input(false);
         } else if (Math.abs(e1.getY() - e2.getY()) < GESTURE_LIMIT && (e1.getX() - e2.getX() > ZERO)) {
             //왼쪽 드래그
             Toast.makeText(mContext, "LEFT", Toast.LENGTH_SHORT).show();
             // 지우기 코드
             Delete();
-            BrailleInput.Delete();
+            //BrailleInput.Delete();
 
         } else if (Math.abs(e1.getY() - e2.getY()) < GESTURE_LIMIT && (e2.getX() - e1.getX() > ZERO)) {
             //오른쪽 드래그
@@ -222,7 +258,13 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
             BrailleInput.Flush(true);
             finish();
             //뒤로 돌아가기 코드
-        } else {
+        }
+        else if (Math.abs(e1.getX() - e2.getX()) > 250 && (e1.getY() - e2.getY() > 0) && (e1.getX() - e2.getX()) < 0 ) //오른쪽 위로 슬라이드
+        {
+            ttsManager.speak(binding.txtSend.getText().toString()); //이름 번호 말한다
+        }
+
+        else {
             Toast.makeText(mContext, "ignore", Toast.LENGTH_SHORT).show();
         }
         return true;

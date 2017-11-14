@@ -68,26 +68,17 @@ public class BrailleInput {
         자소단위로 제거합니다.
     */
     public static int Delete() {
-        /*
-        latestCharacter -= 1; //어차피 이게 0되면 -1 리턴돼서 ㄱㅊ
-        if(jongsung!=' ') {
-            jongsung = ' ';
-
+        try{ //Motion 삭제 시도
+            currentBraille = currentBraille.substring(0,currentBraille.length()-1);
+            SendActivity.setClearColor(brailleCount);
+            SendActivity.count--;
+            brailleCount--;
         }
-        else if(joongsung != ' ') {
-            joongsung = ' ';
-
-        }
-        else if(chosung != ' ') {
-            chosung = ' ';
-
-        }
-        else {
+        catch (Exception e) //실패시
+        {
+            Flush(true);
             return -1;
         }
-        return 0;
-        */
-        Flush(true);
         return 0;
     }
 
@@ -317,6 +308,13 @@ public class BrailleInput {
         if (c == ' ') return false;
         SendActivity.AddChosung("" + c);
         return true;
+    }
+
+    public static void Initialize()
+    {
+        brailleCount = 0;
+        currentBraille = "";
+        Flush(true);
     }
 
     public static void Flush(boolean clearDoubleChosung) {
