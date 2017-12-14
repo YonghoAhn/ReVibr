@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:tools="http://schemas.android.com/tools">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -10,47 +10,48 @@
     android:paddingTop="16dp"
     android:weightSum="20"
     android:background="#fff"
+    tools:context="com.valuecomposite.revibr.SearchActivity"
     >
-        <TextView
-            android:padding="5dp"
-            android:id="@+id/txtSend"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/roundtext"
-            android:textSize="18sp"
-            android:layout_weight="8"
-            android:textColor="#000"
-            android:hint="SMS MESSAGE" />
+    <TextView
+        android:padding="5dp"
+        android:id="@+id/txtSend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/roundtext"
+        android:textSize="18sp"
+        android:layout_weight="8"
+        android:textColor="#000"
+        android:hint="SMS MESSAGE" />
 
-        <android.support.v4.widget.Space
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_weight="0.5"
-            />
+    <android.support.v4.widget.Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_weight="0.5"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="12"
+        android:weightSum="2">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="12"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal"
             android:weightSum="2">
-
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight=".5"
+                ></LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:orientation="horizontal"
-                android:weightSum="2">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".5"
-                    ></LinearLayout>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:weightSum="3">
+                android:orientation="vertical"
+                android:weightSum="3">
                 <TextView
                     android:layout_margin="10dp"
                     android:background="@drawable/circle"
@@ -74,29 +75,29 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"></TextView>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".5"
-                    ></LinearLayout>
             </LinearLayout>
-
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight=".5"
+                ></LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:weightSum="2">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_weight=".5"></LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:weightSum="3"
                 android:layout_weight="1"
-                android:orientation="horizontal"
-                android:weightSum="2">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:layout_weight=".5"></LinearLayout>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:weightSum="3"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                android:orientation="vertical">
                 <TextView
                     android:layout_margin="10dp"
                     android:background="@drawable/circle"
@@ -120,12 +121,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"></TextView>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:layout_weight=".5"></LinearLayout>
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_weight=".5"></LinearLayout>
         </LinearLayout>
+    </LinearLayout>
     <android.support.v4.widget.Space
         android:layout_width="match_parent"
         android:layout_height="20dp"

@@ -14,6 +14,7 @@ import android.provider.ContactsContract;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,6 +24,10 @@ import android.widget.Toast;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.valuecomposite.revibr.databinding.ActivityPhonebookBinding;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import static com.valuecomposite.revibr.DataManager.mContext;
 
 /**
@@ -59,6 +64,7 @@ public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGe
                         Manifest.permission.INTERNET, Manifest.permission.RECORD_AUDIO, Manifest.permission.MODIFY_PHONE_STATE}, 200);
         }
         Initialize();
+        //getSMSTest();
     }
 
     @Override
@@ -71,6 +77,8 @@ public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGe
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
     }
+
+
 
     public String getPreferences(String key, String subkey){
         SharedPreferences pref = getSharedPreferences(key, MODE_PRIVATE);
@@ -97,8 +105,12 @@ public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGe
     public void PBDisplay(int pos)
     {
         PhoneBookItem p = DataManager.PBItems.get(pos);
-        binding.number.setText(p.getPhoneNumber());
-        binding.name.setText(p.getDisplayName());
+        binding.number1.setText(p.getPhoneNumber());
+        binding.name1.setText(p.getDisplayName());
+        PhoneBookItem p2 = DataManager.PBItems.get(pos+1);
+        binding.number2.setText(p2.getPhoneNumber());
+        binding.name2.setText(p2.getDisplayName());
+
     }
 
     @Override
@@ -154,7 +166,7 @@ public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGe
         } else if ((e1.getX() - e2.getX() > 0) && (e1.getY() - e2.getY() > 0)) {
             //왼쪽 위 대각선 드래그
             Toast.makeText(getApplicationContext(), "message receiving activity", Toast.LENGTH_SHORT).show();
-            DataManager.CurrentSMS = new SMSItem(" "," "," "," ");
+            DataManager.CurrentSMS = new SMSItem("11/24","01043406162","밸류컴포짓","안녕하세요! 밸류컴포짓 입니다. 이제 진동은 또 하나의 언어입니다. 진동점자를 느껴보세요.");
             Intent scActivityIntent = new Intent(getApplicationContext(), ReceiveActivity.class);
             scActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getApplicationContext().startActivity(scActivityIntent);
@@ -165,7 +177,7 @@ public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGe
         }
         else if (Math.abs(e1.getX() - e2.getX()) > 250 && (e1.getY() - e2.getY() > 0) && (e1.getX() - e2.getX()) < 0 ) //오른쪽 위로 슬라이드
         {
-            ttsManager.speak(binding.name.getText().toString() + " " + binding.number.getText().toString()); //이름 번호 말한다
+            ttsManager.speak(binding.name1.getText().toString() + " " + binding.number1.getText().toString()); //이름 번호 말한다
         }
         else
         {
@@ -177,14 +189,14 @@ public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGe
     private void nextDisplay(char c) {
         if(c == 'n')
         {
-            PhoneBookPosition++;
+            PhoneBookPosition+=2;
             if(PhoneBookPosition>=DataManager.PBItems.size())
-                PhoneBookPosition--;
+                PhoneBookPosition-=2;
             PBDisplay(PhoneBookPosition);
         }
         else
         {
-            PhoneBookPosition--;
+            PhoneBookPosition-=2;
             if(PhoneBookPosition<0)
                 PhoneBookPosition = 0;
             PBDisplay(PhoneBookPosition);

@@ -13,6 +13,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.valuecomposite.revibr.databinding.ActivityReceiveBinding;
 import java.util.ArrayList;
 
@@ -33,6 +35,7 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
     static boolean isNumeric = false;
     static BrailleConverter BC = new BrailleConverter();
     static TTSManager ttsManager;
+    private Tracker mTracker;
 
     public String getPreferences(String key, String subkey){
         SharedPreferences pref = getSharedPreferences(key, MODE_PRIVATE);
@@ -55,7 +58,8 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
         vibrator = new Vibrator(getApplicationContext());
         ttsManager = new TTSManager(getApplicationContext());
         parseSMS(DataManager.CurrentSMS);
-
+        ApplicationController application = (ApplicationController) getApplication();
+        mTracker = application.getDefaultTracker();
         if(getPreferences("setting","mode").equals(""))
             savePreferences("setting","mode","1");
         switch (getPreferences("setting","mode").toCharArray()[0]) //설정된 데이터를 바인딩
@@ -73,6 +77,17 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
                 DataManager.VibrateMode = 4;
                 break;
         }
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        //using tracker variable to set Screen Name
+        mTracker.setScreenName("ReceiveActivity");
+        //sending the screen to analytics using ScreenViewBuilder() method
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
     }
 
     @Override
@@ -270,12 +285,14 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
                     CurrentBraille = BrailleContent.get(count++);
                     binding.brailleText.setText(CurrentBraille);
                     char[] chars = CurrentBraille.toCharArray();
+                    //binding.BrailleChar.setText(Character.toString(binding.body.getText().charAt(count/2)));
                     vibrator.vibrate((chars[0] == '0' ? 100 : 300), (chars[1] == '0' ? 100 : 300), (chars[2] == '0' ? 100 : 300));
                 } else if (DataManager.VibrateMode == 3) //6점식
                 {
                     CurrentBraille = BrailleContent.get(count++) + BrailleContent.get(count++);
                     binding.brailleText.setText(CurrentBraille);
                     char[] chars = CurrentBraille.toCharArray();
+                   // binding.BrailleChar.setText(Character.toString(binding.brailleText.getText().charAt(count)));
                     vibrator.vibrate((chars[0] == '0' ? 100 : 300), (chars[1] == '0' ? 100 : 300), (chars[2] == '0' ? 100 : 300), (chars[3] == '0' ? 100 : 300), (chars[4] == '0' ? 100 : 300), (chars[5] == '0' ? 100 : 300));
                 } else if (DataManager.VibrateMode == 4) //1점식
                 {

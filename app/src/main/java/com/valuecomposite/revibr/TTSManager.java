@@ -14,6 +14,16 @@ import java.util.Locale;
 
 public class TTSManager {
     static TextToSpeech tts;
+    static TTSManager instance = null;
+
+    public static TTSManager getInstance(Context context)
+    {
+        if(instance!=null)
+            return instance;
+        else
+            return (instance = new TTSManager(context));
+    }
+
     public TTSManager(Context context) {
         tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
             @Override
@@ -29,6 +39,7 @@ public class TTSManager {
             }
         });
     }
+
 
     public void speak(String text)
     {

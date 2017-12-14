@@ -73,7 +73,7 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
             ArrayList<String> mResult = results.getStringArrayList(key);
             String[] rs = new String[mResult.size()];
             mResult.toArray(rs);
-            binding.txtSend.setText(binding.txtSend + " " +rs[0]);
+            binding.txtSend.setText(binding.txtSend.getText() + " " +rs[0]);
             vibrator.vibrate(500); //Listen Completed
             ttsManager.speak(binding.txtSend.getText().toString()); //뭐가 입력됐는지 읽어줌
         }
@@ -169,7 +169,7 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
         ApplicationController application = (ApplicationController) getApplication();
         mTracker = application.getDefaultTracker();
         vibrator = new Vibrator(getApplicationContext());
-        ttsManager = new TTSManager(getApplicationContext());
+        ttsManager = TTSManager.getInstance(getApplicationContext());
         intent =  new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ko-KR");
@@ -184,7 +184,7 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
     {
         super.onResume();
         //using tracker variable to set Screen Name
-        mTracker.setScreenName("PhoneBookActivity");
+        mTracker.setScreenName("SendActivity");
         //sending the screen to analytics using ScreenViewBuilder() method
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
@@ -275,27 +275,27 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
         if(gesture) {
             switch (idx) {
                 case 0:
-                    binding.idxOne.setBackgroundColor(Color.parseColor("#000000"));
+                    binding.idxOne.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle_black));
                     count++;
                     break;
                 case 1:
-                    binding.idxTwo.setBackgroundColor(Color.parseColor("#000000"));
+                    binding.idxTwo.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle_black));
                     count++;
                     break;
                 case 2:
-                    binding.idxThree.setBackgroundColor(Color.parseColor("#000000"));
+                    binding.idxThree.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle_black));
                     count++;
                     break;
                 case 3:
-                    binding.idxFour.setBackgroundColor(Color.parseColor("#000000"));
+                    binding.idxFour.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle_black));
                     count++;
                     break;
                 case 4:
-                    binding.idxFive.setBackgroundColor(Color.parseColor("#000000"));
+                    binding.idxFive.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle_black));
                     count++;
                     break;
                 case 5:
-                    binding.idxSix.setBackgroundColor(Color.parseColor("#000000"));
+                    binding.idxSix.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle_black));
                     count++;
                     break;
             }
@@ -304,27 +304,27 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
         {
             switch (idx) {
                 case 0:
-                    binding.idxOne.setBackgroundColor(Color.parseColor("#eeeeee"));
+                    binding.idxOne.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle_white));
                     count++;
                     break;
                 case 1:
-                    binding.idxTwo.setBackgroundColor(Color.parseColor("#eeeeee"));
+                    binding.idxTwo.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle_white));
                     count++;
                     break;
                 case 2:
-                    binding.idxThree.setBackgroundColor(Color.parseColor("#eeeeee"));
+                    binding.idxThree.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle_white));
                     count++;
                     break;
                 case 3:
-                    binding.idxFour.setBackgroundColor(Color.parseColor("#eeeeee"));
+                    binding.idxFour.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle_white));
                     count++;
                     break;
                 case 4:
-                    binding.idxFive.setBackgroundColor(Color.parseColor("#eeeeee"));
+                    binding.idxFive.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle_white));
                     count++;
                     break;
                 case 5:
-                    binding.idxSix.setBackgroundColor(Color.parseColor("#eeeeee"));
+                    binding.idxSix.setBackground(ContextCompat.getDrawable(mContext, R.drawable.circle_white));
                     count++;
                     break;
             }

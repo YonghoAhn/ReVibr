@@ -1,24 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
     <item>
-        <shape android:shape="oval" >
-            <solid android:color="#444444" />
-            <corners android:radius="2dp"/>
-        </shape>
-    </item>
-    <item
-        android:bottom="2dp"
-        android:left="2dp"
-        android:right="2dp"
-        android:top="2dp"
-        >
 
         <shape android:shape="oval" >
-            <gradient
-                android:angle="180"
-                android:startColor="#9000ff"
-                android:endColor="#0057e5"
-                android:type="sweep" />
+            <solid android:color="#000" />
             <corners android:radius="1dp"/>
         </shape>
 

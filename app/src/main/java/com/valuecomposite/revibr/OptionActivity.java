@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.valuecomposite.revibr.databinding.ActivityOptionBinding;
 
 /**
@@ -16,6 +18,7 @@ import com.valuecomposite.revibr.databinding.ActivityOptionBinding;
 
 public class OptionActivity extends AppCompatActivity {
     static ActivityOptionBinding binding;
+    private Tracker mTracker;
 
     public String getPreferences(String key, String subkey){
         SharedPreferences pref = getSharedPreferences(key, MODE_PRIVATE);
@@ -34,6 +37,9 @@ public class OptionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_option);
         binding = DataBindingUtil.setContentView(this,R.layout.activity_option);
+        ApplicationController application = (ApplicationController) getApplication();
+        mTracker = application.getDefaultTracker();
+
         if(getPreferences("setting","mode").equals(""))
             savePreferences("setting","mode","1");
         switch (getPreferences("setting","mode").toCharArray()[0]) //설정된 데이터를 바인딩
@@ -80,6 +86,17 @@ public class OptionActivity extends AppCompatActivity {
 
             }
         });
+
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        //using tracker variable to set Screen Name
+        mTracker.setScreenName("OptionActivity");
+        //sending the screen to analytics using ScreenViewBuilder() method
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
     }
 
