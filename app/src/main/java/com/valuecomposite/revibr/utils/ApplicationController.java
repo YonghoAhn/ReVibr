@@ -1,9 +1,10 @@
-package com.valuecomposite.revibr;
+package com.valuecomposite.revibr.utils;
 
 import android.app.Application;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.valuecomposite.revibr.R;
 
 import java.util.HashMap;
 

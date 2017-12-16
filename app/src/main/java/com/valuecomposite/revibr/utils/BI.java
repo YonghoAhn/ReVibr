@@ -1,8 +1,10 @@
-package com.valuecomposite.revibr;
+package com.valuecomposite.revibr.utils;
 
-import static com.valuecomposite.revibr.BI.FLAG.FLAG_EMPTY;
-import static com.valuecomposite.revibr.BI.FLAG.FLAG_ENGLISH;
-import static com.valuecomposite.revibr.BI.FLAG.FLAG_NUMBER;
+import com.valuecomposite.revibr.Activities.SendActivity;
+
+import static com.valuecomposite.revibr.utils.BI.FLAG.FLAG_EMPTY;
+import static com.valuecomposite.revibr.utils.BI.FLAG.FLAG_ENGLISH;
+import static com.valuecomposite.revibr.utils.BI.FLAG.FLAG_NUMBER;
 
 /**
  * Created by anyongho on 2017. 10. 3..

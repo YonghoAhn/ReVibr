@@ -1,15 +1,15 @@
-package com.valuecomposite.revibr;
+package com.valuecomposite.revibr.utils;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.valuecomposite.revibr.Activities.ReceiveActivity;
+
 import java.util.Date;
 
 /**

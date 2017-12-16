@@ -10,7 +10,7 @@
     android:paddingTop="16dp"
     android:weightSum="20"
     android:background="#fff"
-    tools:context="com.valuecomposite.revibr.SearchActivity"
+    tools:context="com.valuecomposite.revibr.Activities.SearchActivity"
     >
     <TextView
         android:padding="5dp"

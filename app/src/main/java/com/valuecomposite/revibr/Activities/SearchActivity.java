@@ -1,4 +1,4 @@
-package com.valuecomposite.revibr;
+package com.valuecomposite.revibr.Activities;
 
 import android.databinding.DataBindingUtil;
 import android.support.v4.view.GestureDetectorCompat;
@@ -9,6 +9,8 @@ import android.view.MotionEvent;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.valuecomposite.revibr.utils.ApplicationController;
+import com.valuecomposite.revibr.R;
 import com.valuecomposite.revibr.databinding.ActivitySearchBinding;
 
 public class SearchActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {

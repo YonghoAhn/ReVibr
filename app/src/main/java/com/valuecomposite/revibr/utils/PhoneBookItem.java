@@ -1,4 +1,4 @@
-package com.valuecomposite.revibr;
+package com.valuecomposite.revibr.utils;
 
 /**
  * Created by ayh07 on 8/10/2017.

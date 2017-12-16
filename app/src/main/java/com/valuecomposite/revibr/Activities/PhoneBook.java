@@ -1,34 +1,30 @@
-package com.valuecomposite.revibr;
+package com.valuecomposite.revibr.Activities;
 
 import android.Manifest;
-import android.app.VoiceInteractor;
 import android.content.*;
-import android.content.BroadcastReceiver;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.databinding.DataBindingUtil;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.valuecomposite.revibr.utils.ApplicationController;
+import com.valuecomposite.revibr.utils.ContactManager;
+import com.valuecomposite.revibr.utils.DataManager;
+import com.valuecomposite.revibr.utils.PhoneBookItem;
+import com.valuecomposite.revibr.R;
+import com.valuecomposite.revibr.utils.SMSItem;
+import com.valuecomposite.revibr.utils.TTSManager;
 import com.valuecomposite.revibr.databinding.ActivityPhonebookBinding;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import static com.valuecomposite.revibr.DataManager.mContext;
+import static com.valuecomposite.revibr.utils.DataManager.mContext;
 
 /**
  * Created by ayh07 on 8/10/2017.

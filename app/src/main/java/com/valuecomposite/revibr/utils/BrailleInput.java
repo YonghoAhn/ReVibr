@@ -2,7 +2,7 @@
  * Created by ayh07 on 8/13/2017.
  */
 
-package com.valuecomposite.revibr;
+package com.valuecomposite.revibr.utils;
 
 /**
  * Created by anyongho on 2017. 10. 3..
@@ -10,9 +10,11 @@ package com.valuecomposite.revibr;
 
 import android.util.Log;
 
-import static com.valuecomposite.revibr.BrailleInput.FLAG.FLAG_EMPTY;
-import static com.valuecomposite.revibr.BrailleInput.FLAG.FLAG_ENGLISH;
-import static com.valuecomposite.revibr.BrailleInput.FLAG.FLAG_NUMBER;
+import com.valuecomposite.revibr.Activities.SendActivity;
+
+import static com.valuecomposite.revibr.utils.BrailleInput.FLAG.FLAG_EMPTY;
+import static com.valuecomposite.revibr.utils.BrailleInput.FLAG.FLAG_ENGLISH;
+import static com.valuecomposite.revibr.utils.BrailleInput.FLAG.FLAG_NUMBER;
 
 //Temp
 public class BrailleInput {

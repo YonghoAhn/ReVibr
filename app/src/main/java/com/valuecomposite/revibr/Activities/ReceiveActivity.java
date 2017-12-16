@@ -1,20 +1,24 @@
-package com.valuecomposite.revibr;
+package com.valuecomposite.revibr.Activities;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.os.Debug;
-import android.provider.ContactsContract;
-import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.GestureDetector.*;
 import android.view.MotionEvent;
-import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.valuecomposite.revibr.utils.ApplicationController;
+import com.valuecomposite.revibr.utils.BrailleConverter;
+import com.valuecomposite.revibr.utils.ContactManager;
+import com.valuecomposite.revibr.utils.DataManager;
+import com.valuecomposite.revibr.utils.HangulSupport;
+import com.valuecomposite.revibr.utils.PhoneBookItem;
+import com.valuecomposite.revibr.R;
+import com.valuecomposite.revibr.utils.SMSItem;
+import com.valuecomposite.revibr.utils.TTSManager;
+import com.valuecomposite.revibr.utils.Vibrator;
 import com.valuecomposite.revibr.databinding.ActivityReceiveBinding;
 import java.util.ArrayList;
 

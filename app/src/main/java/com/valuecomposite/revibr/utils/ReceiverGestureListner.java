@@ -1,11 +1,10 @@
-package com.valuecomposite.revibr;
+package com.valuecomposite.revibr.utils;
 
-import android.provider.ContactsContract;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.Toast;
 
-import static com.valuecomposite.revibr.DataManager.mContext;
+import com.valuecomposite.revibr.Activities.ReceiveActivity;
 
 /**
  * Created by ayh07 on 8/24/2017.

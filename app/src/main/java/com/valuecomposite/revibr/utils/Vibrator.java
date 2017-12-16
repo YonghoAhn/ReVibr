@@ -1,4 +1,4 @@
-package com.valuecomposite.revibr;
+package com.valuecomposite.revibr.utils;
 
 import android.content.Context;
 

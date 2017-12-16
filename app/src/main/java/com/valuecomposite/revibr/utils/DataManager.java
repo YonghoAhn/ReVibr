@@ -1,9 +1,6 @@
-package com.valuecomposite.revibr;
+package com.valuecomposite.revibr.utils;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
-import android.provider.ContactsContract;
 
 import java.util.ArrayList;
 import java.util.HashMap;

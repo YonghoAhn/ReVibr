@@ -1,4 +1,4 @@
-package com.valuecomposite.revibr;
+package com.valuecomposite.revibr.Activities;
 
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
@@ -6,10 +6,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Spinner;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.valuecomposite.revibr.utils.ApplicationController;
+import com.valuecomposite.revibr.utils.DataManager;
+import com.valuecomposite.revibr.R;
 import com.valuecomposite.revibr.databinding.ActivityOptionBinding;
 
 /**

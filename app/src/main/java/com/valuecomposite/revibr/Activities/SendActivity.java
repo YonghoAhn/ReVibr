@@ -1,9 +1,8 @@
-package com.valuecomposite.revibr;
+package com.valuecomposite.revibr.Activities;
 
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
@@ -19,13 +18,16 @@ import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.valuecomposite.revibr.utils.ApplicationController;
+import com.valuecomposite.revibr.utils.BrailleInput;
+import com.valuecomposite.revibr.R;
+import com.valuecomposite.revibr.utils.TTSManager;
+import com.valuecomposite.revibr.utils.Vibrator;
 import com.valuecomposite.revibr.databinding.ActivitySendBinding;
 
 import java.util.ArrayList;
 
-import static com.valuecomposite.revibr.DataManager.mContext;
-import static com.valuecomposite.revibr.PhoneBook.GESTURE_LIMIT;
-import static com.valuecomposite.revibr.PhoneBook.ZERO;
+import static com.valuecomposite.revibr.utils.DataManager.mContext;
 
 /**
  * Created by ayh07 on 8/12/2017.
@@ -224,31 +226,31 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float v, float v1) {
-        if (Math.abs(e1.getX() - e2.getX()) < GESTURE_LIMIT && (e1.getY() - e2.getY() > ZERO)) {
+        if (Math.abs(e1.getX() - e2.getX()) < PhoneBook.GESTURE_LIMIT && (e1.getY() - e2.getY() > PhoneBook.ZERO)) {
             //위로 드래그
             Toast.makeText(mContext, "UP", Toast.LENGTH_SHORT).show();
             colorIdentify(count,true);
             vibrator.vibrate(300);
             BrailleInput.Input(true);
-        } else if (Math.abs(e1.getX() - e2.getX()) < GESTURE_LIMIT && (e2.getY() - e1.getY() > ZERO)) {
+        } else if (Math.abs(e1.getX() - e2.getX()) < PhoneBook.GESTURE_LIMIT && (e2.getY() - e1.getY() > PhoneBook.ZERO)) {
             //아래로 드래그
             Toast.makeText(mContext, "DOWN", Toast.LENGTH_SHORT).show();
             colorIdentify(count,false);
             vibrator.vibrate(100);
             BrailleInput.Input(false);
-        } else if (Math.abs(e1.getY() - e2.getY()) < GESTURE_LIMIT && (e1.getX() - e2.getX() > ZERO)) {
+        } else if (Math.abs(e1.getY() - e2.getY()) < PhoneBook.GESTURE_LIMIT && (e1.getX() - e2.getX() > PhoneBook.ZERO)) {
             //왼쪽 드래그
             Toast.makeText(mContext, "LEFT", Toast.LENGTH_SHORT).show();
             // 지우기 코드
             Delete();
             //BrailleInput.Delete();
 
-        } else if (Math.abs(e1.getY() - e2.getY()) < GESTURE_LIMIT && (e2.getX() - e1.getX() > ZERO)) {
+        } else if (Math.abs(e1.getY() - e2.getY()) < PhoneBook.GESTURE_LIMIT && (e2.getX() - e1.getX() > PhoneBook.ZERO)) {
             //오른쪽 드래그
             Toast.makeText(mContext, "RIGHT", Toast.LENGTH_SHORT).show();
             // 문자 보내기 코드
             sendSMS(binding.txtSend.getText().toString());
-        } else if ((e2.getX() - e1.getX() > ZERO) && (e2.getY() - e1.getY() > ZERO)) {
+        } else if ((e2.getX() - e1.getX() > PhoneBook.ZERO) && (e2.getY() - e1.getY() > PhoneBook.ZERO)) {
             //오른쪽 아래 대각선 드래그
             Toast.makeText(getApplicationContext(), "message sending activity", Toast.LENGTH_SHORT).show();
             mRecognizer.startListening(intent);
