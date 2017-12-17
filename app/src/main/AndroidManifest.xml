@@ -37,7 +37,6 @@
         <activity android:name=".Activities.PhoneBook" />
         <activity android:name=".Activities.ReceiveActivity" />
         <activity android:name=".Activities.SendActivity" />
-        <activity android:name=".Activities.MainActivity" />
         <activity android:name=".Activities.OptionActivity" />
         <activity android:name=".Activities.SplashActivity" >
             <intent-filter>

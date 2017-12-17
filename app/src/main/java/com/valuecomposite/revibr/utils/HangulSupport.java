@@ -95,4 +95,22 @@ public class HangulSupport {
         rt[2] = LastSound[c3];
         return rt;
     }
+
+    public static String CreateChosungString(String name)
+    {
+        char[] input = name.toCharArray();
+        String result="";
+        for(char c : input) {
+            char[] rt = new char[3];
+            int nTmp = c - BASECODE;
+            int c1 = nTmp / CHOSUNG;
+            int c2 = (nTmp - (CHOSUNG * c1)) / JUNGSUNG;
+            int c3 = (nTmp - (CHOSUNG * c1) - (JUNGSUNG * c2));
+            rt[0] = FirstSound[c1];
+            rt[1] = MiddleSound[c2];
+            rt[2] = LastSound[c3];
+            result += rt[0];
+        }
+        return result;
+    }
 }

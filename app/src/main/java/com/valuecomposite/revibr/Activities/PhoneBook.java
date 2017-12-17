@@ -18,6 +18,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.valuecomposite.revibr.utils.ApplicationController;
 import com.valuecomposite.revibr.utils.ContactManager;
 import com.valuecomposite.revibr.utils.DataManager;
+import com.valuecomposite.revibr.utils.Initializer;
 import com.valuecomposite.revibr.utils.PhoneBookItem;
 import com.valuecomposite.revibr.R;
 import com.valuecomposite.revibr.utils.SMSItem;
@@ -31,6 +32,7 @@ import static com.valuecomposite.revibr.utils.DataManager.mContext;
  */
 
 public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener{
+    //region variables
     static ActivityPhonebookBinding binding;
     private GestureDetectorCompat gDetector;
     TTSManager ttsManager;
@@ -38,6 +40,9 @@ public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGe
     static final int GESTURE_LIMIT = 250;
     static int PhoneBookPosition = 0;
     private Tracker mTracker;
+
+    //endregion
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -47,18 +52,6 @@ public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGe
         gDetector = new GestureDetectorCompat(this,this);
         ApplicationController application = (ApplicationController) getApplication();
         mTracker = application.getDefaultTracker();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.MODIFY_PHONE_STATE) != PackageManager.PERMISSION_GRANTED)
-
-                requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_CONTACTS, Manifest.permission.SEND_SMS,
-                        Manifest.permission.INTERNET, Manifest.permission.RECORD_AUDIO, Manifest.permission.MODIFY_PHONE_STATE}, 200);
-        }
         Initialize();
         //getSMSTest();
     }
@@ -74,38 +67,17 @@ public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGe
 
     }
 
-
-
-    public String getPreferences(String key, String subkey){
-        SharedPreferences pref = getSharedPreferences(key, MODE_PRIVATE);
-        return pref.getString(subkey, "");
-    }
-
-    public void savePreferences(String key, String subkey, String content){
-        SharedPreferences pref = getSharedPreferences(key, MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString(subkey, content);
-        editor.commit();
-    }
-
     public void Initialize()
     {
-        ContactManager contactManager = new ContactManager(getApplicationContext());
-        DataManager.PBItems = contactManager.getContactList();
-        ttsManager = new TTSManager(getApplicationContext());
-        if(getPreferences("setting","mode").equals(""))
-            savePreferences("setting","mode","1");
+        Initializer.Instantiate(getApplicationContext());
         PBDisplay(0);
     }
 
     public void PBDisplay(int pos)
     {
         PhoneBookItem p = DataManager.PBItems.get(pos);
-        binding.number1.setText(p.getPhoneNumber());
-        binding.name1.setText(p.getDisplayName());
-        PhoneBookItem p2 = DataManager.PBItems.get(pos+1);
-        binding.number2.setText(p2.getPhoneNumber());
-        binding.name2.setText(p2.getDisplayName());
+        binding.number.setText(p.getPhoneNumber());
+        binding.name.setText(p.getDisplayName());
 
     }
 
@@ -173,7 +145,7 @@ public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGe
         }
         else if (Math.abs(e1.getX() - e2.getX()) > 250 && (e1.getY() - e2.getY() > 0) && (e1.getX() - e2.getX()) < 0 ) //오른쪽 위로 슬라이드
         {
-            ttsManager.speak(binding.name1.getText().toString() + " " + binding.number1.getText().toString()); //이름 번호 말한다
+            ttsManager.speak(binding.name.getText().toString() + " " + binding.number.getText().toString()); //이름 번호 말한다
         }
         else
         {
@@ -185,14 +157,14 @@ public class PhoneBook extends AppCompatActivity implements GestureDetector.OnGe
     private void nextDisplay(char c) {
         if(c == 'n')
         {
-            PhoneBookPosition+=2;
+            PhoneBookPosition++;
             if(PhoneBookPosition>=DataManager.PBItems.size())
-                PhoneBookPosition-=2;
+                PhoneBookPosition--;
             PBDisplay(PhoneBookPosition);
         }
         else
         {
-            PhoneBookPosition-=2;
+            PhoneBookPosition--;
             if(PhoneBookPosition<0)
                 PhoneBookPosition = 0;
             PBDisplay(PhoneBookPosition);

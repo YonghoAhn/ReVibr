@@ -9,23 +9,27 @@ import android.view.MotionEvent;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.valuecomposite.revibr.databinding.ActivitySendBinding;
 import com.valuecomposite.revibr.utils.ApplicationController;
 import com.valuecomposite.revibr.R;
-import com.valuecomposite.revibr.databinding.ActivitySearchBinding;
+
+// Layout은 Send와 공유
+// 초성으로 검색하기
+// PhoneBookItems -> 초성대로 다시 만든 List가 필요
 
 public class SearchActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
-    private ActivitySearchBinding binding;
+    private ActivitySendBinding binding;
     private GestureDetectorCompat gDetector;
     private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
+        setContentView(R.layout.activity_send);
 
         gDetector = new GestureDetectorCompat(this,this);
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_search);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_send);
 
         ApplicationController application = (ApplicationController) getApplication();
         mTracker = application.getDefaultTracker();

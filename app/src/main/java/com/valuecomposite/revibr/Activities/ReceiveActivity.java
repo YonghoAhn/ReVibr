@@ -14,6 +14,7 @@ import com.valuecomposite.revibr.utils.BrailleConverter;
 import com.valuecomposite.revibr.utils.ContactManager;
 import com.valuecomposite.revibr.utils.DataManager;
 import com.valuecomposite.revibr.utils.HangulSupport;
+import com.valuecomposite.revibr.utils.Initializer;
 import com.valuecomposite.revibr.utils.PhoneBookItem;
 import com.valuecomposite.revibr.R;
 import com.valuecomposite.revibr.utils.SMSItem;
@@ -41,46 +42,19 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
     static TTSManager ttsManager;
     private Tracker mTracker;
 
-    public String getPreferences(String key, String subkey){
-        SharedPreferences pref = getSharedPreferences(key, MODE_PRIVATE);
-        return pref.getString(subkey, "");
-    }
-
-    public void savePreferences(String key, String subkey, String content){
-        SharedPreferences pref = getSharedPreferences(key, MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString(subkey, content);
-        editor.commit();
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receive);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_receive);
         gestureDetector = new GestureDetector(this, this);
-        vibrator = new Vibrator(getApplicationContext());
-        ttsManager = new TTSManager(getApplicationContext());
+        vibrator = Vibrator.getInstace(getApplicationContext());
+        ttsManager = TTSManager.getInstance(getApplicationContext());
         parseSMS(DataManager.CurrentSMS);
         ApplicationController application = (ApplicationController) getApplication();
         mTracker = application.getDefaultTracker();
-        if(getPreferences("setting","mode").equals(""))
-            savePreferences("setting","mode","1");
-        switch (getPreferences("setting","mode").toCharArray()[0]) //설정된 데이터를 바인딩
-        {
-            case '1':
-                DataManager.VibrateMode = 1;
-                break;
-            case '2':
-                DataManager.VibrateMode = 2;
-                break;
-            case '3':
-                DataManager.VibrateMode = 3;
-                break;
-            case '4':
-                DataManager.VibrateMode = 4;
-                break;
-        }
+        Initializer.Instantiate(getApplicationContext());
+
     }
 
     @Override

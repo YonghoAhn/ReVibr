@@ -10,10 +10,22 @@ public class Vibrator {
 
     //메서드를 호출, 진동을 울리는 모듈이다.
 
+
     private android.os.Vibrator m_Vibrator;
+    static Vibrator instance = null;
+
+
     public Vibrator(Context context)
     {
         m_Vibrator = (android.os.Vibrator)context.getSystemService(context.VIBRATOR_SERVICE);
+    }
+
+    public static Vibrator getInstace(Context context)
+    {
+        if(instance!=null)
+            return instance;
+        else
+            return instance=new Vibrator(context);
     }
 
     public void vibrate(int millisecond)

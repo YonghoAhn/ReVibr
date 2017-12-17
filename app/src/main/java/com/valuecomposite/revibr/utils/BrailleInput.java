@@ -84,21 +84,6 @@ public class BrailleInput {
         return 0;
     }
 
-    /*
-        이전 글자를 넘겨주고 자소 한 개를 제거합니다.
-    */
-    public static int Delete(char beforeChar) {
-        //이전의 문자를 넘겨받았음.
-        if (beforeChar == ' ')
-            return -1;
-        char[] chars = HangulSupport.HangulAlphabet(beforeChar);
-        chosung = chars[0];
-        joongsung = chars[1];
-        jongsung = chars[2]; //초 중 종성 등록해줌
-        latestCharacter = chars[2] != ' ' ? 3 : 2; //최근 입력된 글자를 변경해줌
-        Delete(); //한번 호출해서 지워줌
-        return 0;
-    }
 
     //
     private static void Composition() {

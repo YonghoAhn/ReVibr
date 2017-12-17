@@ -14,10 +14,17 @@ import java.util.ArrayList;
 public class ContactManager {
 
     private Context context;
-
+    static ContactManager instance=null;
     public ContactManager(Context context)
     {
         this.context = context;
+    }
+
+    public static ContactManager getInstance(Context context) {
+        if(instance!=null)
+            return instance;
+        else
+            return (instance=new ContactManager(context));
     }
 
     public ArrayList<PhoneBookItem> getContactList() {
@@ -55,6 +62,7 @@ public class ContactManager {
                 contact.setId(contactCursor.getLong(0));
                 contact.setPhoneNumber(phonenumber);
                 contact.setDisplayName(contactCursor.getString(2));
+                contact.setChosung(HangulSupport.CreateChosungString(contact.getDisplayName()));
                 contactlist.add(contact);
 
             } while (contactCursor.moveToNext());

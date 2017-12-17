@@ -1,9 +1,12 @@
 package com.valuecomposite.revibr.utils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by ayh07 on 8/11/2017.
@@ -16,6 +19,10 @@ public class DataManager {
     public static ArrayList<SMSItem> SMSItems = new ArrayList<>();
     public static SMSItem CurrentSMS = new SMSItem();
     public static int VibrateMode = 1;
+
+    public static int MODE = 0; //0 = Send Mode, 1 = Search Mode
+
+
     //한글 초중종성 딕셔너리
     public static HashMap<String, Character> HANGUL_FIRST_SOUND = new HashMap<>();
     public static HashMap<String, Character> HANGUL_MIDDLE_SOUND = new HashMap<>();
@@ -35,6 +42,8 @@ public class DataManager {
     public static final String WHITE_SPACE = "000000";
     public static final String DOUBLE_CHAR = "000001";
     public static final String ALPHABET_SIGN = "001011";
+
+
 
 
 

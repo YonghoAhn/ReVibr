@@ -5,12 +5,12 @@ package com.valuecomposite.revibr.utils;
  */
 
 public class PhoneBookItem {
-    private String phoneNum, displayName;
+    private String phoneNum, displayName,chosung;
     private long id;
     public PhoneBookItem() { }
-    public PhoneBookItem(String Num, String Name)
+    public PhoneBookItem(String Num, String Name,String chosung)
     {
-        phoneNum = Num; displayName = Name;
+        phoneNum = Num; displayName = Name;this.chosung = chosung;
     }
     public String getPhoneNumber() { return phoneNum; }
     public String getDisplayName() { return  displayName; }
@@ -19,5 +19,13 @@ public class PhoneBookItem {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getChosung() {
+        return chosung;
+    }
+
+    public void setChosung(String chosung) {
+        this.chosung = chosung;
     }
 }
