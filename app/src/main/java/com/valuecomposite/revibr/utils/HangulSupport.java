@@ -101,15 +101,13 @@ public class HangulSupport {
         char[] input = name.toCharArray();
         String result="";
         for(char c : input) {
-            char[] rt = new char[3];
+            char rt;
             int nTmp = c - BASECODE;
             int c1 = nTmp / CHOSUNG;
-            int c2 = (nTmp - (CHOSUNG * c1)) / JUNGSUNG;
-            int c3 = (nTmp - (CHOSUNG * c1) - (JUNGSUNG * c2));
-            rt[0] = FirstSound[c1];
-            rt[1] = MiddleSound[c2];
-            rt[2] = LastSound[c3];
-            result += rt[0];
+            if(c1>=0 && c1 <= 18) {
+                rt = FirstSound[c1];
+                result += rt;
+            }
         }
         return result;
     }

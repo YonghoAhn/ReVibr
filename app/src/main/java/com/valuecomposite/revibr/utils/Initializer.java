@@ -14,11 +14,12 @@ public class Initializer {
     static Context context;
     static TTSManager ttsManager;
     static Vibrator vibrator;
+
     public Initializer(Context context)
     {
         this.context = context;
-        ContactManager contactManager = ContactManager.getInstance(context);
-        DataManager.PBItems = contactManager.getContactList();
+        if(DataManager.MODE == 0)
+            InitializeContactsList(context);
         ttsManager = TTSManager.getInstance(context);
         vibrator = Vibrator.getInstace(context);
         if(getPreferences("setting","mode").equals(""))
@@ -38,6 +39,12 @@ public class Initializer {
                 DataManager.VibrateMode = 4;
                 break;
         }
+    }
+
+    public static void InitializeContactsList(Context context)
+    {
+        ContactManager contactManager = ContactManager.getInstance(context);
+        DataManager.PBItems = contactManager.getContactList();
     }
 
     public String getPreferences(String key, String subkey){

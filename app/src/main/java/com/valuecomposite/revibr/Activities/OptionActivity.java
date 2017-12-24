@@ -1,5 +1,6 @@
 package com.valuecomposite.revibr.Activities;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -18,7 +19,7 @@ import com.valuecomposite.revibr.databinding.ActivityOptionBinding;
  * Created by ayh07 on 9/17/2017.
  */
 
-public class OptionActivity extends AppCompatActivity {
+public class OptionActivity extends Activity {
     static ActivityOptionBinding binding;
     private Tracker mTracker;
 

@@ -6,11 +6,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.valuecomposite.revibr.utils.ApplicationController;
 import com.valuecomposite.revibr.utils.BrailleConverter;
+import com.valuecomposite.revibr.utils.BrailleInput;
+import com.valuecomposite.revibr.utils.BrailleOutput;
 import com.valuecomposite.revibr.utils.ContactManager;
 import com.valuecomposite.revibr.utils.DataManager;
 import com.valuecomposite.revibr.utils.HangulSupport;
@@ -21,6 +24,8 @@ import com.valuecomposite.revibr.utils.SMSItem;
 import com.valuecomposite.revibr.utils.TTSManager;
 import com.valuecomposite.revibr.utils.Vibrator;
 import com.valuecomposite.revibr.databinding.ActivityReceiveBinding;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -41,20 +46,33 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
     static BrailleConverter BC = new BrailleConverter();
     static TTSManager ttsManager;
     private Tracker mTracker;
-
+    private ArrayList<SMSItem> smsItems = new ArrayList<>();
+    int smsIndex = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receive);
+
+        Initializer.Instantiate(getApplicationContext());
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_receive);
         gestureDetector = new GestureDetector(this, this);
         vibrator = Vibrator.getInstace(getApplicationContext());
         ttsManager = TTSManager.getInstance(getApplicationContext());
-        parseSMS(DataManager.CurrentSMS);
+
         ApplicationController application = (ApplicationController) getApplication();
         mTracker = application.getDefaultTracker();
-        Initializer.Instantiate(getApplicationContext());
 
+
+        ContactManager c = ContactManager.getInstance(getApplicationContext());
+        smsItems = c.getSmsList(getApplicationContext(),DataManager.CurrentSMS.getPhoneNum());
+        if(smsItems.size()>0)
+            DataManager.CurrentSMS = smsItems.get(0);
+        else {
+            DataManager.CurrentSMS = new SMSItem("", DataManager.CurrentSMS.getPhoneNum(), DataManager.CurrentSMS.getDisplayName(), "주고받은 문자가 없습니다.");
+            ttsManager.speak("문자 내역이 없습니다.");
+        }
+        parseSMS(DataManager.CurrentSMS);
     }
 
     @Override
@@ -74,6 +92,8 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
         return true;
     }
 
+
+
     public void parseSMS(SMSItem smsItem)
     {
         ContactManager contactManager = new ContactManager(getApplicationContext());
@@ -87,134 +107,9 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
 
         //SMS를 진동으로 바꾸기만 하면 됨.
         //3개씩 끊어서 돌려주기?
-        char[] chars = smsItem.getBody().toCharArray();
-        Log.d("MisakaMOE","Content : " + Character.toString(chars[0]));
-        Log.d("MisakaMOE","Content : " + new String("" + chars[0]).matches(".*[a-z|A-Z]"));
-        for(int i = 0; i < chars.length;i++)
-        {
-            Log.d("MisakaMOE","Enter For");
-
-            //c = c;
-            //Log.d("MisakaMOE","Content : " + chars.toString());
-            Log.d("MisakaMOE","Content : " + chars[0]);
-            String str = Character.toString(chars[i]);
-            try {
-
-                if (new String("" + chars[0]).matches(".*[a-z|A-Z]")) //Is it English
-                {
-                    Log.d("MisakaMOE","Alphabet");
-                    isNumeric = false;
-                    if (!isEnglish) {
-                        BrailleContent.add("001");
-                        BrailleContent.add("011");
-                        isEnglish = true;
-                        Log.d("MisakaMOE","First Alphabet");
-                    }
-                    String s = BC.getEnglishBraille(chars[i]);
-                    Log.d("MisakaMOE","Content is " + s);
-                    BrailleContent.add(s.substring(0, 3));
-                    BrailleContent.add(s.substring(3, 6));
-                } else if (Character.isDigit(chars[i])) //Is It Numeric
-                {
-                    Log.d("MisakaMOE","Numeric ");
-                    isEnglish = false;
-                    if (!isNumeric) {
-                        BrailleContent.add("001");
-                        BrailleContent.add("111");
-                        Log.d("MisakaMOE","First Numeric");
-                    }
-                    String s = BC.getNumericBraille(chars[i]);
-                    Log.d("MisakaMOE","Content is " + s);
-                    BrailleContent.add(s.substring(0, 3));
-                    BrailleContent.add(s.substring(3, 6));
-                } else //Is It Korean Or Special Text Or Space
-                {
-                    isEnglish = false;
-                    isNumeric = false;
-                    if (!new String("" + chars[0]).matches("[0-9|a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|가-힝]*")) //특수문자면
-                    {
-//Ignore It
-                        Log.d("MisakaMOE","Special Character");
-                    } else if (chars[i] == ' ') {
-//Space, 000 000 Add
-                        Log.d("MisakaMOE","Space");
-                        BrailleContent.add("000");
-                        BrailleContent.add("000");
-                    } else //Hangul
-                    {
-                        Log.d("MisakaMOE","Hangul");
-//한글자만 있는것들
-//초성 아니면 중성 단독이면 그냥 처리
-//결합된 조합자면 분리 후 처리
-                        if (str.matches(".*[ㄱ-ㅎ]")) //초성류
-                        {
-                            Log.d("MisakaMOE","Chosung");
-                            if (chars[i] == 'ㅇ') {
-                                Log.d("MisakaMOE","초성이 ㅇ");
-                                BrailleContent.add("110");
-                                BrailleContent.add("110");
-                            } else {
-
-                                if(chars[i] == 'ㄲ'||chars[i] == 'ㄸ'||chars[i] == 'ㅃ'||chars[i] == 'ㅆ'||chars[i] == 'ㅉ')
-                                {
-                                    BrailleContent.add("000");
-                                    BrailleContent.add("001");
-                                    switch(chars[i])
-                                    {
-                                        case 'ㄲ':
-                                            chars[i] = 'ㄱ';
-                                            break;
-                                        case 'ㄸ':
-                                            chars[i] = 'ㄷ';
-                                            break;
-                                        case 'ㅃ':
-                                            chars[i] = 'ㅂ';
-                                            break;
-                                        case 'ㅆ':
-                                            chars[i] = 'ㅅ';
-                                            break;
-                                        case 'ㅉ':
-                                            chars[i] = 'ㅈ';
-                                            break;
-                                    }
-                                }
-                                String s = BC.getKoreanBraille(chars[i], 0);
-                                Log.d("MisakaMOE","Content is " + s);
-                                BrailleContent.add(s.substring(0, 3));
-                                BrailleContent.add(s.substring(3, 6));
-                            }
-                        } else if (str.matches(".*[ㅏ-ㅣ]")) {
-                            Log.d("MisakaMOE","Joongsung");
-                            String s = BC.getKoreanBraille(chars[i], 1);
-                            Log.d("MisakaMOE","Content is " + s);
-                            BrailleContent.add(s.substring(0, 3));
-                            BrailleContent.add(s.substring(3, 6));
-                        } else {
-                            char[] hangul = HangulSupport.HangulAlphabet(chars[i]);
-                            int cnt = 0;
-                            for (char c1 : hangul) {
-                                if (c1 == 'ㅇ' && cnt == 0) {
-                                    Log.d("MisakaMOE","Chosung is ㅇ");
-                                    BrailleContent.add("110");
-                                    BrailleContent.add("110");
-                                } else {
-
-                                    String s = BC.getKoreanBraille(c1, cnt);
-                                    Log.d("MisakaMOE","Content is " + s);
-                                    BrailleContent.add(s.substring(0, 3));
-                                    BrailleContent.add(s.substring(3, 6));
-                                }
-                                cnt++;
-                            }
-                        }
-                    }
-                }
-            }
-            catch(Exception e)
-            {
-                Log.d("MisakaMOE","Error is " + e.getMessage().toString());
-                //Toast.makeText(getApplicationContext(),e.getMessage().toString(),Toast.LENGTH_SHORT).show();
-            }
+        //이거 ""인거 생각 안함 ㅋㅋㅋㅋㅋ
+        if(!(smsItem.getBody() == null||smsItem.getBody().equals(""))){
+            BrailleContent = BrailleOutput.parseSMS(smsItem.getBody());
         }
     }
 
@@ -395,10 +290,49 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
             //위/아래로 드래그
             ReceiveActivity.onFling();
         }
-        else if (Math.abs(e1.getX() - e2.getX()) > 250 && (e1.getY() - e2.getY() > 0) && (e1.getX() - e2.getX()) < 0 ) //오른쪽 위로 슬라이드
+        else if (Math.abs(e1.getX() - e2.getX()) > 250 && (e1.getY() - e2.getY() > 100) && (e1.getX() - e2.getX()) < 0 )
         {
+            //오른쪽 위로 슬라이드
             ttsManager.speak(binding.name.getText().toString() + " " + binding.body.getText().toString()); //이름 번호 말한다
         }
+        else if (Math.abs(e1.getY() - e2.getY()) < PhoneBook.GESTURE_LIMIT && (e2.getX() - e1.getX() > PhoneBook.ZERO))
+        {
+            //오른쪽 드래그
+            //prev
+            nextDisplay(0);
+        }
+        else if (Math.abs(e1.getY() - e2.getY()) < PhoneBook.GESTURE_LIMIT && (e1.getX() - e2.getX() > PhoneBook.ZERO))
+        {
+            //왼쪽 드래그
+            //next
+            nextDisplay(1);
+        } else if((e1.getX() - e2.getX() > 0)&&(e1.getY()-e2.getY() < 0)){
+            //왼쪽 아래 드래그
+            finish();
+        }
         return true;
+    }
+
+    public void nextDisplay(int mode)
+    {
+        if(smsItems.size() > 0 && smsIndex >= 0) { //한 건도 없지 않아야 함 //0 이상이어야 뭘 움직일수 있음
+
+            if (mode == 0) {
+                //Backside : Before
+                if(smsIndex > 0) { //현재위치가 1 이상이어야 뒤로감
+                    smsIndex--;
+                    DataManager.CurrentSMS = smsItems.get(smsIndex);
+                    parseSMS(DataManager.CurrentSMS);
+                }
+
+            } else {
+                //Foreside : After
+                if(smsIndex < smsItems.size()-1) { //현재위치가 최대사이즈보다 작아야 다음으로감
+                    smsIndex++;
+                    DataManager.CurrentSMS = smsItems.get(smsIndex);
+                    parseSMS(DataManager.CurrentSMS);
+                }
+            }
+        }
     }
 }

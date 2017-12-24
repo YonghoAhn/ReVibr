@@ -20,7 +20,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/Theme.AppCompat.Light">
         <receiver
             android:name=".utils.BroadcastReceiver"
             android:exported="true">
@@ -35,8 +35,13 @@
             android:value="@integer/google_play_services_version" />
 
         <activity android:name=".Activities.PhoneBook" />
-        <activity android:name=".Activities.ReceiveActivity" />
-        <activity android:name=".Activities.SendActivity" />
+        <activity android:name=".Activities.ReceiveActivity"
+            android:launchMode="singleTask"
+            android:clearTaskOnLaunch="true"
+            />
+        <activity android:name=".Activities.SendActivity"
+            android:clearTaskOnLaunch="true"
+            />
         <activity android:name=".Activities.OptionActivity" />
         <activity android:name=".Activities.SplashActivity" >
             <intent-filter>

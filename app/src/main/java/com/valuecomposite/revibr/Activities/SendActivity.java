@@ -4,6 +4,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
@@ -21,6 +22,10 @@ import com.google.android.gms.analytics.Tracker;
 import com.valuecomposite.revibr.utils.ApplicationController;
 import com.valuecomposite.revibr.utils.BrailleInput;
 import com.valuecomposite.revibr.R;
+import com.valuecomposite.revibr.utils.ContactManager;
+import com.valuecomposite.revibr.utils.DataManager;
+import com.valuecomposite.revibr.utils.Initializer;
+import com.valuecomposite.revibr.utils.PhoneBookItem;
 import com.valuecomposite.revibr.utils.TTSManager;
 import com.valuecomposite.revibr.utils.Vibrator;
 import com.valuecomposite.revibr.databinding.ActivitySendBinding;
@@ -28,6 +33,7 @@ import com.valuecomposite.revibr.databinding.ActivitySendBinding;
 import java.util.ArrayList;
 
 import static com.valuecomposite.revibr.utils.DataManager.MODE;
+import static com.valuecomposite.revibr.utils.DataManager.PBItems;
 import static com.valuecomposite.revibr.utils.DataManager.mContext;
 
 /**
@@ -87,30 +93,52 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
 
     //region Braille_Method
     public static void AddText(String s) {
-        String t = binding.txtSend.getText().toString();
-        binding.txtSend.setText(t.substring(0, t.length() - 1) + s);
+        //초성이 아닌 것은 무시하도록 전송모드일때만 중성/종성 추가되게함
+        if (MODE == 0) {
+            String t = binding.txtSend.getText().toString();
+            binding.txtSend.setText(t.substring(0, t.length() - 1) + s);
+            ttsManager.speak(s);
+        }
     }
 
     public static void AddChosung(String s) {
         binding.txtSend.setText(binding.txtSend.getText() + s);
+        ttsManager.speak(s);
     }
 
-    private static void sendSMS(String s) {
+    private static boolean sendSMS(String s) {
         String smsText = s;
         if (smsNum.length() > 0 && smsText.length() > 0) {
-            sendSMS(smsNum, smsText);
-            binding.txtSend.setText("");
-            Toast.makeText(mContext, "전송됨", Toast.LENGTH_SHORT).show();
+            if(sendSMS(smsNum, smsText))
+            {
+                //문자 전송 성공 시
+                binding.txtSend.setText("");
+                Toast.makeText(mContext, "전송됨", Toast.LENGTH_SHORT).show();
+
+                return true;
+            }
+            else
+            {
+                Toast.makeText(mContext,"실패",Toast.LENGTH_SHORT).show();
+            }
         } else {
             Toast.makeText(mContext, "비었습니다.", Toast.LENGTH_SHORT).show();
         }
+        return false;
     }
 
-    private static void sendSMS(String smsNum, String smsText) {
-        PendingIntent sentIntent = PendingIntent.getBroadcast(mContext, 0, new Intent("SMS_SENT_ACTION"), 0);
-        PendingIntent deliverIntent = PendingIntent.getBroadcast(mContext, 0, new Intent("SMS_DELIVERED_ACTION"), 0);
-        SmsManager mSmsManager = SmsManager.getDefault();
-        mSmsManager.sendTextMessage(smsNum, null, smsText, sentIntent, deliverIntent);
+    private static boolean sendSMS(String smsNum, String smsText) {
+        try {
+            PendingIntent sentIntent = PendingIntent.getBroadcast(mContext, 0, new Intent("SMS_SENT_ACTION"), 0);
+            PendingIntent deliverIntent = PendingIntent.getBroadcast(mContext, 0, new Intent("SMS_DELIVERED_ACTION"), 0);
+            SmsManager mSmsManager = SmsManager.getDefault();
+            mSmsManager.sendTextMessage(smsNum, null, smsText, sentIntent, deliverIntent);
+            return true;
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
     }
 
     public static void clearColor() {
@@ -213,6 +241,7 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
         { //Motion Delete, and its failed, we should remove character{
             try {
                 binding.txtSend.setText(binding.txtSend.getText().toString().substring(0, binding.txtSend.getText().length() - 1));
+                ttsManager.speak("지움");
             }
             catch (Exception e)
             {
@@ -223,6 +252,14 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
         {
 
         }
+    }
+
+    public void ClearAll()
+    {
+        BrailleInput.Flush(true);
+        count=0;
+        binding.txtSend.setText("");
+        clearColor();
     }
     //endregion
 
@@ -270,15 +307,23 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
         mContext = getApplicationContext();
 
         gDetector = new GestureDetectorCompat(this,this);
-
-        Intent getIntent = getIntent();
-        smsNum = getIntent.getExtras().getString("number");
+        vibrator = Vibrator.getInstace(getApplicationContext());
+        ttsManager = TTSManager.getInstance(getApplicationContext());
+        //검색모드면 번호를 가져올 이유가 없음
+        if(MODE==0) {
+            ttsManager.speak("문자 전송");
+            Intent getIntent = getIntent();
+            smsNum = getIntent.getExtras().getString("number");
+        }
+        else
+        {
+            ttsManager.speak("대화상대의 초성을 입력하세요");
+        }
 
         ApplicationController application = (ApplicationController) getApplication();
         mTracker = application.getDefaultTracker();
 
-        vibrator = Vibrator.getInstace(getApplicationContext());
-        ttsManager = TTSManager.getInstance(getApplicationContext());
+
 
         intent =  new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
@@ -298,6 +343,20 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
         //sending the screen to analytics using ScreenViewBuilder() method
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        ClearAll();
+        super.onDestroy();
+    }
+
+    //뒤로가기로 끄면 꺼버림
+    @Override
+    public void onBackPressed()
+    {
+        finish();
     }
 
     @Override
@@ -328,10 +387,41 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
                 //오른쪽 드래그
                 Toast.makeText(mContext, "RIGHT", Toast.LENGTH_SHORT).show();
                 // 문자 보내기 코드
-                sendSMS(binding.txtSend.getText().toString());
+                if(sendSMS(binding.txtSend.getText().toString()))
+                {
+                    //문자 전송 성공
+                    Intent i = new Intent(mContext,SplashActivity.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(i);
+                    finish();
+                }
+
             }
             else if(MODE==1) //검색모드면 검색해서 띄워준다.
             {
+                //DataManager.PBItems를 돌면서, chosung.equals(input text)인것만 추출하는 새로운 ArrayList<PBItem> 만들고 그걸 PBITems로 재할당
+                ArrayList<PhoneBookItem> SearchResult = new ArrayList<>();
+                Initializer.InitializeContactsList(getApplicationContext()); //검색하려면 먼저 불러와야지
+
+                for(PhoneBookItem phoneBookItem : DataManager.PBItems)
+                {
+                    if(phoneBookItem.getChosung().contains(binding.txtSend.getText().toString())) //포함으로 해야할듯
+                    {
+                        SearchResult.add(phoneBookItem);
+                    }
+                }
+                if(SearchResult.size() == 0) //아무것도 없다면 검색결과 없음 띄우기
+                    SearchResult.add(new PhoneBookItem("","검색결과가 없습니다.",""));
+                //PBItems를 검색결과로 대체한다.
+                PBItems = SearchResult;
+                //그리고 결과를 초기화한다.
+                ClearAll();
+                //그다음 검색 Result를 띄워준다.
+                Intent resultIntent = new Intent(getApplicationContext(),PhoneBook.class);
+                resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(resultIntent);
 
             }
 
@@ -342,16 +432,13 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
                 Toast.makeText(getApplicationContext(), "message sending activity", Toast.LENGTH_SHORT).show();
                 mRecognizer.startListening(intent);
             }
-        } else if ((e1.getX() - e2.getX() > 0) && (e1.getY() - e2.getY() > 0)) {
-            //왼쪽 위 대각선 드래그
-            //이전으로 돌아가기
-            Toast.makeText(getApplicationContext(), "message sending activity", Toast.LENGTH_SHORT).show();
-            BrailleInput.Flush(true);
+        } else if((e1.getX() - e2.getX() > 0)&&(e1.getY()-e2.getY() < 0)){
+            //왼쪽 아래 드래그
             finish();
-            //뒤로 돌아가기 코드
         }
-        else if (Math.abs(e1.getX() - e2.getX()) > 250 && (e1.getY() - e2.getY() > 0) && (e1.getX() - e2.getX()) < 0 ) //오른쪽 위로 슬라이드
+        else if (Math.abs(e1.getX() - e2.getX()) > 250 && (e1.getY() - e2.getY() > 0) && (e1.getX() - e2.getX()) < 0 )
         {
+            //오른쪽 위로 슬라이드
             ttsManager.speak(binding.txtSend.getText().toString()); //이름 번호 말한다
         }
 

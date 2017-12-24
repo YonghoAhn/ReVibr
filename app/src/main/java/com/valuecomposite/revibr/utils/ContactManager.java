@@ -4,8 +4,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by anyongho on 2017. 9. 23..
@@ -48,16 +50,6 @@ public class ContactManager {
         if (contactCursor.moveToFirst()) {
             do {
                 String phonenumber = contactCursor.getString(1).replaceAll("-","");
-                if (phonenumber.length() == 10) {
-                    phonenumber = phonenumber.substring(0, 3) + "-"
-                            + phonenumber.substring(3, 6) + "-"
-                            + phonenumber.substring(6);
-                } else if (phonenumber.length() > 8) {
-                    phonenumber = phonenumber.substring(0, 3) + "-"
-                            + phonenumber.substring(3, 7) + "-"
-                            + phonenumber.substring(7);
-                }
-
                 PhoneBookItem contact = new PhoneBookItem();
                 contact.setId(contactCursor.getLong(0));
                 contact.setPhoneNumber(phonenumber);
@@ -70,5 +62,41 @@ public class ContactManager {
 
         return contactlist;
 
+    }
+
+    public ArrayList<SMSItem> getSmsList(Context context,String number)
+    {
+        ArrayList<SMSItem> smsItems = new ArrayList<>();
+
+        Uri uri = Uri.parse("content://sms/");
+        Cursor c = context.getContentResolver().query(uri, null, null ,null,null);
+        if(c.moveToFirst()) {
+            for(int i=0; i < c.getCount(); i++) {
+
+                SMSItem sms = new SMSItem();
+                sms.setBody(c.getString(c.getColumnIndexOrThrow("body")).toString());
+                sms.setTime(c.getString(c.getColumnIndexOrThrow("date")).toString());
+                sms.setPhoneNum(c.getString(c.getColumnIndexOrThrow("address")).toString());
+                //smsList.add(sms);
+                if(sms.getPhoneNum().equals(number)){
+                    smsItems.add(sms);
+                }
+                String address  = c.getString(c.getColumnIndexOrThrow("address")).toString();
+                String mbody    = c.getString(c.getColumnIndexOrThrow("body")).toString();
+                String mdate    = c.getString(c.getColumnIndexOrThrow("date")).toString();
+                Date dt = new Date(Long.valueOf(mdate));
+                StringBuilder msgString = new StringBuilder();
+                msgString.append(address + "<-||->");
+                msgString.append(mbody  + "<-||->");
+                msgString.append(dt  + "<-||->");
+                msgString.append(mdate + "<--!-->");
+                //Toast.makeText(context,msgString.toString(),Toast.LENGTH_SHORT).show();
+                c.moveToNext();
+            }
+        }
+        c.close();
+
+
+        return smsItems;
     }
 }
