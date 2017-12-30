@@ -17,10 +17,8 @@ import com.valuecomposite.revibr.R;
 // 초성으로 검색하기
 // PhoneBookItems -> 초성대로 다시 만든 List가 필요
 
-public class SearchActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
+public class SearchActivity extends BaseActivity{
     private ActivitySendBinding binding;
-    private GestureDetectorCompat gDetector;
-    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,9 +28,6 @@ public class SearchActivity extends AppCompatActivity implements GestureDetector
         gDetector = new GestureDetectorCompat(this,this);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_send);
-
-        ApplicationController application = (ApplicationController) getApplication();
-        mTracker = application.getDefaultTracker();
     }
 
     @Override

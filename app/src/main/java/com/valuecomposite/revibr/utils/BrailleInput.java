@@ -42,6 +42,8 @@ public class BrailleInput {
     private static String currentBraille = "";
     // uses only input "Hangul" Character
     private static int latestCharacter = 0;
+    //
+    private static boolean IsTwiceSpace = false;
     /*
        Braille Converter
      */
@@ -87,20 +89,34 @@ public class BrailleInput {
 
     //
     private static void Composition() {
-        if (stateFlag == FLAG_EMPTY) //영어표 숫자표
+
+        if(currentBraille.equals(SPACE))
         {
-            EmptyComposition();
-        } else if (stateFlag == FLAG_ENGLISH) //영어모드
-        {
-            EnglishComposition();
-        } else if (stateFlag == FLAG_NUMBER) //숫자모드
-        {
-            NumberComposition();
+            //띄어쓰기니까 flush해야됨
+            if(IsTwiceSpace)
+            {
+              //두번째 눌린 Space면 FLush됐고, 띄어쓰기 해야됨
+                SendActivity.AddChosung(" ");
+                IsTwiceSpace = false;
+            }
+            else
+            {
+                Flush(true);
+                //처음 눌렸음
+                IsTwiceSpace = true;
+            }
         }
+
+        if (stateFlag == FLAG_EMPTY) //영어표 숫자표
+            EmptyComposition();
+        else if (stateFlag == FLAG_ENGLISH) //영어모드
+            EnglishComposition();
+        else if (stateFlag == FLAG_NUMBER) //숫자모드
+            NumberComposition();
     }
 
     private static boolean EmptyComposition() {
-        if (currentBraille.equals(ENGLISH_TAG)) {
+        if (currentBraille.equals(ENGLISH_TAG) && latestCharacter < 2) {
             stateFlag = FLAG_ENGLISH;
             return true;
         } else if (currentBraille.equals(NUMBER_TAG)) {
@@ -135,7 +151,7 @@ public class BrailleInput {
         char c = brailleConverter.getHangulCharacter(currentBraille);
         if (doubleChosungFlag && (c == 'ㄱ' || c == 'ㄷ' || c == 'ㅂ' || c == 'ㅈ')) //쌍자음 플래그가 섰다면
         {
-            SendActivity.Delete(); //원래 있던 ㅅ을 지우고 초성을 넘긴다.
+            SendActivity.Delete(true); //원래 있던 ㅅ을 지우고 초성을 넘긴다.
             switch (c) //ㅅ은 000001과 겹치므로, 중성 입력 시 처리한다.
             {
                 case 'ㄱ':
@@ -147,10 +163,14 @@ public class BrailleInput {
                 case 'ㅂ':
                     c = 'ㅃ';
                     break;
+                case 'ㅅ':
+                    c = 'ㅆ';
+                    break;
                 case 'ㅈ':
                     c = 'ㅉ';
                     break;
             }
+            doubleChosungFlag=false;
         }
         if (currentBraille.equals(DOUBLE_CHOSUNG_TAG))
             doubleChosungFlag = true;
@@ -309,6 +329,7 @@ public class BrailleInput {
         joongsung = ' ';
         jongsung = ' ';
         latestCharacter = 0;
+        stateFlag = FLAG_EMPTY;
         if (clearDoubleChosung)
             doubleChosungFlag = false;
     }

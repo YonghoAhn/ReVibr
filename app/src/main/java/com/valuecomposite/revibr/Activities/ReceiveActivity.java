@@ -2,6 +2,7 @@ package com.valuecomposite.revibr.Activities;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -31,18 +32,14 @@ import java.util.ArrayList;
 /**
  * Created by ayh07 on 8/12/2017.
  */
-public class ReceiveActivity extends AppCompatActivity implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener{
+public class ReceiveActivity extends BaseActivity{
 
-    GestureDetector gestureDetector;
     static ActivityReceiveBinding binding;
     static boolean IsTouched = false;
     static ArrayList<String> BrailleContent = new ArrayList<>();
     private static int count = 0;
     private static int sub_count = 0;
     static String CurrentBraille = "";
-    static Vibrator vibrator;
-    static boolean isEnglish = false;
-    static boolean isNumeric = false;
     static BrailleConverter BC = new BrailleConverter();
     static TTSManager ttsManager;
     private Tracker mTracker;
@@ -53,25 +50,19 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receive);
 
-        Initializer.Instantiate(getApplicationContext());
-
         binding = DataBindingUtil.setContentView(this, R.layout.activity_receive);
-        gestureDetector = new GestureDetector(this, this);
-        vibrator = Vibrator.getInstace(getApplicationContext());
-        ttsManager = TTSManager.getInstance(getApplicationContext());
-
-        ApplicationController application = (ApplicationController) getApplication();
-        mTracker = application.getDefaultTracker();
-
+        gDetector = new GestureDetectorCompat(this, this);
 
         ContactManager c = ContactManager.getInstance(getApplicationContext());
         smsItems = c.getSmsList(getApplicationContext(),DataManager.CurrentSMS.getPhoneNum());
+
         if(smsItems.size()>0)
             DataManager.CurrentSMS = smsItems.get(0);
         else {
             DataManager.CurrentSMS = new SMSItem("", DataManager.CurrentSMS.getPhoneNum(), DataManager.CurrentSMS.getDisplayName(), "주고받은 문자가 없습니다.");
             ttsManager.speak("문자 내역이 없습니다.");
         }
+
         parseSMS(DataManager.CurrentSMS);
     }
 
@@ -88,7 +79,7 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
-        gestureDetector.onTouchEvent(motionEvent);
+        gDetector.onTouchEvent(motionEvent);
         return true;
     }
 
@@ -295,13 +286,13 @@ public class ReceiveActivity extends AppCompatActivity implements GestureDetecto
             //오른쪽 위로 슬라이드
             ttsManager.speak(binding.name.getText().toString() + " " + binding.body.getText().toString()); //이름 번호 말한다
         }
-        else if (Math.abs(e1.getY() - e2.getY()) < PhoneBook.GESTURE_LIMIT && (e2.getX() - e1.getX() > PhoneBook.ZERO))
+        else if (Math.abs(e1.getY() - e2.getY()) < GESTURE_LIMIT && (e2.getX() - e1.getX() > ZERO))
         {
             //오른쪽 드래그
             //prev
             nextDisplay(0);
         }
-        else if (Math.abs(e1.getY() - e2.getY()) < PhoneBook.GESTURE_LIMIT && (e1.getX() - e2.getX() > PhoneBook.ZERO))
+        else if (Math.abs(e1.getY() - e2.getY()) < GESTURE_LIMIT && (e1.getX() - e2.getX() > ZERO))
         {
             //왼쪽 드래그
             //next

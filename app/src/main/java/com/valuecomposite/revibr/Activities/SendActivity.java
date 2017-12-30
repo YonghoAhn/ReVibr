@@ -40,15 +40,11 @@ import static com.valuecomposite.revibr.utils.DataManager.mContext;
  * Created by ayh07 on 8/12/2017.
  */
 
-public class SendActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
+public class SendActivity extends BaseActivity {
     //region variables
     public static int count = 0;
     static ActivitySendBinding binding;
     private static String smsNum = "";
-    private GestureDetectorCompat gDetector;
-    private Tracker mTracker;
-    static Vibrator vibrator;
-    static TTSManager ttsManager;
     private Intent intent;
     private SpeechRecognizer mRecognizer;
     private RecognitionListener listener = new RecognitionListener() {
@@ -254,6 +250,17 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
         }
     }
 
+    public static void Delete(boolean deleteChar) {
+        //Motion Delete, and its failed, we should remove character{
+        try {
+            binding.txtSend.setText(binding.txtSend.getText().toString().substring(0, binding.txtSend.getText().length() - 1));
+            ttsManager.speak("지움");
+        } catch (Exception e) {
+            Log.d("MisakaMOE", e.getMessage());
+        }
+    }
+
+
     public void ClearAll()
     {
         BrailleInput.Flush(true);
@@ -307,8 +314,6 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
         mContext = getApplicationContext();
 
         gDetector = new GestureDetectorCompat(this,this);
-        vibrator = Vibrator.getInstace(getApplicationContext());
-        ttsManager = TTSManager.getInstance(getApplicationContext());
         //검색모드면 번호를 가져올 이유가 없음
         if(MODE==0) {
             ttsManager.speak("문자 전송");
@@ -319,11 +324,6 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
         {
             ttsManager.speak("대화상대의 초성을 입력하세요");
         }
-
-        ApplicationController application = (ApplicationController) getApplication();
-        mTracker = application.getDefaultTracker();
-
-
 
         intent =  new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
@@ -361,26 +361,26 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float v, float v1) {
-        if (Math.abs(e1.getX() - e2.getX()) < PhoneBook.GESTURE_LIMIT && (e1.getY() - e2.getY() > PhoneBook.ZERO)) {
+        if (Math.abs(e1.getX() - e2.getX()) < GESTURE_LIMIT && (e1.getY() - e2.getY() > ZERO)) {
             //위로 드래그
             Toast.makeText(mContext, "UP", Toast.LENGTH_SHORT).show();
             colorIdentify(count,true);
             vibrator.vibrate(300);
             BrailleInput.Input(true);
-        } else if (Math.abs(e1.getX() - e2.getX()) < PhoneBook.GESTURE_LIMIT && (e2.getY() - e1.getY() > PhoneBook.ZERO)) {
+        } else if (Math.abs(e1.getX() - e2.getX()) < GESTURE_LIMIT && (e2.getY() - e1.getY() > ZERO)) {
             //아래로 드래그
             Toast.makeText(mContext, "DOWN", Toast.LENGTH_SHORT).show();
             colorIdentify(count,false);
             vibrator.vibrate(100);
             BrailleInput.Input(false);
-        } else if (Math.abs(e1.getY() - e2.getY()) < PhoneBook.GESTURE_LIMIT && (e1.getX() - e2.getX() > PhoneBook.ZERO)) {
+        } else if (Math.abs(e1.getY() - e2.getY()) < GESTURE_LIMIT && (e1.getX() - e2.getX() > ZERO)) {
             //왼쪽 드래그
             Toast.makeText(mContext, "LEFT", Toast.LENGTH_SHORT).show();
             // 지우기 코드
             Delete();
             //BrailleInput.Delete();
 
-        } else if (Math.abs(e1.getY() - e2.getY()) < PhoneBook.GESTURE_LIMIT && (e2.getX() - e1.getX() > PhoneBook.ZERO)) {
+        } else if (Math.abs(e1.getY() - e2.getY()) < GESTURE_LIMIT && (e2.getX() - e1.getX() > ZERO)) {
 
             if(MODE==0)
             {
@@ -407,7 +407,8 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
 
                 for(PhoneBookItem phoneBookItem : DataManager.PBItems)
                 {
-                    if(phoneBookItem.getChosung().contains(binding.txtSend.getText().toString())) //포함으로 해야할듯
+                    //if(phoneBookItem.getChosung().contains(binding.txtSend.getText().toString())) //포함으로 해야할듯
+                    if(phoneBookItem.getChosung().startsWith(binding.txtSend.getText().toString())) //초성으로 시작하는 것들
                     {
                         SearchResult.add(phoneBookItem);
                     }
@@ -425,7 +426,7 @@ public class SendActivity extends AppCompatActivity implements GestureDetector.O
 
             }
 
-        } else if ((e2.getX() - e1.getX() > PhoneBook.ZERO) && (e2.getY() - e1.getY() > PhoneBook.ZERO)) {
+        } else if ((e2.getX() - e1.getX() > ZERO) && (e2.getY() - e1.getY() > ZERO)) {
             //오른쪽 아래 대각선 드래그
             //듣는건 문자보내는 모드에서만 ㅇㅇ
             if(MODE==0) {

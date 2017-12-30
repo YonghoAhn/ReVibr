@@ -19,9 +19,8 @@ import com.valuecomposite.revibr.databinding.ActivityOptionBinding;
  * Created by ayh07 on 9/17/2017.
  */
 
-public class OptionActivity extends Activity {
+public class OptionActivity extends BaseActivity {
     static ActivityOptionBinding binding;
-    private Tracker mTracker;
 
     public String getPreferences(String key, String subkey){
         SharedPreferences pref = getSharedPreferences(key, MODE_PRIVATE);
@@ -40,8 +39,6 @@ public class OptionActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_option);
         binding = DataBindingUtil.setContentView(this,R.layout.activity_option);
-        ApplicationController application = (ApplicationController) getApplication();
-        mTracker = application.getDefaultTracker();
 
         if(getPreferences("setting","mode").equals(""))
             savePreferences("setting","mode","1");

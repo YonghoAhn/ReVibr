@@ -38,16 +38,10 @@ import static com.valuecomposite.revibr.utils.DataManager.mContext;
  * Created by ayh07 on 8/10/2017.
  */
 
-public class PhoneBook extends Activity implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener{
+public class PhoneBook extends BaseActivity{
     //region variables
     static ActivityPhonebookBinding binding;
-    private GestureDetectorCompat gDetector;
-    TTSManager ttsManager;
-    Vibrator vibrator;
-    static final int ZERO = 0;
-    static final int GESTURE_LIMIT = 250;
     static int PhoneBookPosition = 0;
-    private Tracker mTracker;
     int count = 0;
     ArrayList<String> braille = new ArrayList<>();
     //endregion
@@ -59,10 +53,6 @@ public class PhoneBook extends Activity implements GestureDetector.OnGestureList
         binding = DataBindingUtil.setContentView(this, R.layout.activity_phonebook);
         mContext = getApplicationContext();
         gDetector = new GestureDetectorCompat(this,this);
-        ApplicationController application = (ApplicationController) getApplication();
-        mTracker = application.getDefaultTracker();
-        vibrator = Vibrator.getInstace(getApplicationContext());
-        ttsManager = TTSManager.getInstance(getApplicationContext());
         Initialize();
         //getSMSTest();
     }
@@ -84,7 +74,7 @@ public class PhoneBook extends Activity implements GestureDetector.OnGestureList
 
         if(DataManager.MODE == 0)
         {
-
+            ttsManager.speak("주소록");
         }
         else
         {
