@@ -64,6 +64,7 @@ public class ReceiveActivity extends BaseActivity{
         }
 
         parseSMS(DataManager.CurrentSMS);
+
     }
 
     @Override
@@ -75,6 +76,13 @@ public class ReceiveActivity extends BaseActivity{
         //sending the screen to analytics using ScreenViewBuilder() method
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
+    }
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        recreate();
     }
 
     @Override
