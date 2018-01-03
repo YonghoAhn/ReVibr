@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,24 +11,24 @@
     tools:context="com.valuecomposite.revibr.Activities.SplashActivity">
     <android.support.v4.widget.Space
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
         />
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="130dp"
-        android:src="@drawable/ReVibr_Logo"
-        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/revibrlogo"
+        android:layout_weight="2.5"
         />
     <android.support.v4.widget.Space
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="5"
+        android:layout_height="match_parent"
+        android:layout_weight="2.5"
         />
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
         android:src="@drawable/logo" />
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>
 </layout>

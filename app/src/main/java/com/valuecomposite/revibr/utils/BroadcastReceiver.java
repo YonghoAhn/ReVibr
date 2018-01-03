@@ -90,6 +90,10 @@ public class BroadcastReceiver extends android.content.BroadcastReceiver {
                     // 도착 완료
                     Toast.makeText(context, "SMS 도착 완료", Toast.LENGTH_SHORT).show();
                     Intent scActivity = new Intent(context, ReceiveActivity.class);
+                    //scActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    scActivity.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                    scActivity.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+
                     context.startActivity(scActivity);
                     break;
                 case Activity.RESULT_CANCELED:

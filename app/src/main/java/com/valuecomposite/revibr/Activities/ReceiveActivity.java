@@ -42,7 +42,6 @@ public class ReceiveActivity extends BaseActivity{
     static String CurrentBraille = "";
     static BrailleConverter BC = new BrailleConverter();
     static TTSManager ttsManager;
-    private Tracker mTracker;
     private ArrayList<SMSItem> smsItems = new ArrayList<>();
     int smsIndex = 0;
     @Override
@@ -79,10 +78,10 @@ public class ReceiveActivity extends BaseActivity{
     }
 
     @Override
-    protected void onStop()
+    protected void onPause()
     {
-        super.onStop();
-        recreate();
+        super.onPause();
+        finish();
     }
 
     @Override
