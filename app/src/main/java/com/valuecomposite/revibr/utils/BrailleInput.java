@@ -4,10 +4,6 @@
 
 package com.valuecomposite.revibr.utils;
 
-/**
- * Created by anyongho on 2017. 10. 3..
- */
-
 import android.util.Log;
 
 import com.valuecomposite.revibr.Activities.SendActivity;
@@ -36,8 +32,11 @@ public class BrailleInput {
     private static boolean doubleChosungFlag = false;
     //
     private static char chosung = ' ';
+    public static void SetChosung(char c) {chosung = c;}
     private static char joongsung = ' ';
+    public static void SetJoongsung(char c) {joongsung = c;}
     private static char jongsung = ' ';
+    public static void SetJongsun(char c) { jongsung = c;}
     //
     private static String currentBraille = "";
     // uses only input "Hangul" Character
@@ -220,7 +219,7 @@ public class BrailleInput {
         } else if (chosung == ' ') //초성 입력 없이 그냥 들어옴
         {
             chosung = 'ㅇ'; //초성을 ㅇ으로
-            SendActivity.AddChosung(" "); //後に何か文字が入力することに対比
+            SendActivity.AddChosung(" "); //後に何か文字が入ることに対比
         }
         joongsung = c;
         //Composition Chosung + Joongsung

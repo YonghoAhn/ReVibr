@@ -2,10 +2,6 @@ package com.valuecomposite.revibr.utils;
 
 import java.util.Map;
 
-/**
- * Created by ayh07 on 8/12/2017.
- */
-
 //점자 입력된 데이터를 글자로, 또는 글자를 점자로 바꿔서 제공해주는 클래스
 public class BrailleConverter {
 

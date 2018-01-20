@@ -4,10 +4,6 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-/**
- * Created by ayh07 on 8/13/2017.
- */
-
 public class BrailleOutput {
 //
     // 이 클래스는 점자를 문자로 변경 또는 출력하는 것이 목적이다.
@@ -15,7 +11,7 @@ public class BrailleOutput {
     //
     //3점 단위로 나눠서 판단한다.
     private static String Braille = "";
-    static BrailleConverter BC = new BrailleConverter();
+    private static BrailleConverter BC = new BrailleConverter();
 
     public static ArrayList<String> parseSMS(String Braille)
     {
@@ -23,13 +19,11 @@ public class BrailleOutput {
         boolean isEnglish = false;
         boolean isNumeric = false;
         char[] chars = Braille.toCharArray();
-        Log.d("MisakaMOE","Content : " + Character.toString(chars[0]));
-        Log.d("MisakaMOE","Content : " + new String("" + chars[0]).matches(".*[a-z|A-Z]"));
         for(int i = 0; i < chars.length;i++) {
             String str = Character.toString(chars[i]);
             try {
 
-                if (new String("" + chars[0]).matches(".*[a-z|A-Z]")) //Is it English
+                if (str.matches(".*[a-z|A-Z]")) //Is it English
                 {
                     isNumeric = false;
                     if (!isEnglish) {
@@ -46,6 +40,7 @@ public class BrailleOutput {
                     if (!isNumeric) {
                         BrailleContent.add("001");
                         BrailleContent.add("111");
+                        isNumeric = true;
                     }
                     String s = BC.getNumericBraille(chars[i]);
                     BrailleContent.add(s.substring(0, 3));
@@ -54,14 +49,12 @@ public class BrailleOutput {
                 {
                     isEnglish = false;
                     isNumeric = false;
-                    if (!new String("" + chars[0]).matches("[0-9|a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|가-힝]*")) //특수문자면
-                    {
-                        //Ignore It
-                    } else if (chars[i] == ' ') {
+                    if (chars[i] == ' ') {
                         //Space, 000 000 Add
                         BrailleContent.add("000");
                         BrailleContent.add("000");
-                    } else //Hangul
+                    }
+                    else if (str.matches("[ㄱ-ㅎ|ㅏ-ㅣ|가-힝]*")) //Hangul
                     {
                         //한글자만 있는것들
                         //초성 아니면 중성 단독이면 그냥 처리

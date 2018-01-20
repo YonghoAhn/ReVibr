@@ -40,6 +40,21 @@ public class TTSManager {
         });
     }
 
+    public boolean IsSpeaking()
+    {
+        if(tts!=null) {
+            if (tts.isSpeaking())
+                return true;
+        }
+        return false;
+    }
+
+    public void stop()
+    {
+        if(IsSpeaking())
+            tts.stop();
+
+    }
 
     public void speak(String text)
     {

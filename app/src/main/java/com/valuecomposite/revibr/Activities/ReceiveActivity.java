@@ -29,9 +29,6 @@ import com.valuecomposite.revibr.databinding.ActivityReceiveBinding;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-/**
- * Created by ayh07 on 8/12/2017.
- */
 public class ReceiveActivity extends BaseActivity{
 
     static ActivityReceiveBinding binding;
@@ -41,7 +38,6 @@ public class ReceiveActivity extends BaseActivity{
     private static int sub_count = 0;
     static String CurrentBraille = "";
     static BrailleConverter BC = new BrailleConverter();
-    static TTSManager ttsManager;
     private ArrayList<SMSItem> smsItems = new ArrayList<>();
     int smsIndex = 0;
     @Override
@@ -81,7 +77,7 @@ public class ReceiveActivity extends BaseActivity{
     protected void onPause()
     {
         super.onPause();
-        finish();
+        //finish();
     }
 
     @Override
@@ -98,7 +94,7 @@ public class ReceiveActivity extends BaseActivity{
         DataManager.PBItems = contactManager.getContactList();
         for(PhoneBookItem phoneBookItem : DataManager.PBItems)
         {
-            if(phoneBookItem.getPhoneNumber().toString().replace("-","").equals(smsItem.getPhoneNum()))
+            if(phoneBookItem.getPhoneNumber().replace("-","").equals(smsItem.getPhoneNum()))
                 smsItem.setDisplayName(phoneBookItem.getDisplayName().toString());
         }
         display(smsItem.getTime(),smsItem.getDisplayName(),smsItem.getPhoneNum(),smsItem.getBody());
@@ -108,6 +104,7 @@ public class ReceiveActivity extends BaseActivity{
         //이거 ""인거 생각 안함 ㅋㅋㅋㅋㅋ
         if(!(smsItem.getBody() == null||smsItem.getBody().equals(""))){
             BrailleContent = BrailleOutput.parseSMS(smsItem.getBody());
+            count = 0;
         }
     }
 
@@ -321,14 +318,16 @@ public class ReceiveActivity extends BaseActivity{
                     smsIndex--;
                     DataManager.CurrentSMS = smsItems.get(smsIndex);
                     parseSMS(DataManager.CurrentSMS);
+                    ttsManager.stop();
                 }
 
             } else {
-                //Foreside : After
+                //Fore-side : After
                 if(smsIndex < smsItems.size()-1) { //현재위치가 최대사이즈보다 작아야 다음으로감
                     smsIndex++;
                     DataManager.CurrentSMS = smsItems.get(smsIndex);
                     parseSMS(DataManager.CurrentSMS);
+                    ttsManager.stop();
                 }
             }
         }

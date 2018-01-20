@@ -12,10 +12,6 @@ import com.valuecomposite.revibr.Activities.ReceiveActivity;
 
 import java.util.Date;
 
-/**
- * Created by ayh07 on 8/10/2017.
- */
-
 public class BroadcastReceiver extends android.content.BroadcastReceiver {
 
     PhoneBookItem phoneBookItem;
@@ -51,7 +47,10 @@ public class BroadcastReceiver extends android.content.BroadcastReceiver {
             DataManager.CurrentSMS.setPhoneNum(number);
             DataManager.CurrentSMS.setTime(time);
             DataManager.CurrentSMS.setDisplayName(person);
-            receiveIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            //receiveIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            receiveIntent.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+            receiveIntent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+
             context.startActivity(receiveIntent);
         }
         else if(action.equals(Intent.ACTION_HEADSET_PLUG))
@@ -101,8 +100,6 @@ public class BroadcastReceiver extends android.content.BroadcastReceiver {
                     Toast.makeText(context, "SMS 도착 실패", Toast.LENGTH_SHORT).show();
                     break;
             }
-        }else{
-
         }
     }
 }
