@@ -1,4 +1,4 @@
-package com.valuecomposite.revibr.utils;
+package com.valuecomposite.revibr.BroadcastReceiver;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,6 +9,8 @@ import android.telephony.SmsMessage;
 import android.widget.Toast;
 
 import com.valuecomposite.revibr.Activities.ReceiveActivity;
+import com.valuecomposite.revibr.utils.DataManager;
+import com.valuecomposite.revibr.utils.PhoneBookItem;
 
 import java.util.Date;
 

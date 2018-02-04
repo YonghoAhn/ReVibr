@@ -8,15 +8,12 @@ import java.util.HashMap;
 
 import static android.content.Context.MODE_PRIVATE;
 
-/**
- * Created by ayh07 on 8/11/2017.
- */
 
 public class DataManager {
     public static ArrayList<PhoneBookItem> PBItems = new ArrayList<>();
     public static boolean IsEarphoneConnected = false;
-    public static Context mContext;
-    public static ArrayList<SMSItem> SMSItems = new ArrayList<>();
+    //public static Context mContext;
+    static ArrayList<SMSItem> NewMMSItems = new ArrayList<>();
     public static SMSItem CurrentSMS = new SMSItem();
     public static int VibrateMode = 1;
 
@@ -24,24 +21,24 @@ public class DataManager {
 
 
     //한글 초중종성 딕셔너리
-    public static HashMap<String, Character> HANGUL_FIRST_SOUND = new HashMap<>();
-    public static HashMap<String, Character> HANGUL_MIDDLE_SOUND = new HashMap<>();
-    public static HashMap<String, Character> HANGUL_LAST_SOUND = new HashMap<>();
-    public static HashMap<String, String> HANGUL_EXPRESS_KEYWORD = new HashMap<>();
+    static HashMap<String, Character> HANGUL_FIRST_SOUND = new HashMap<>();
+    static HashMap<String, Character> HANGUL_MIDDLE_SOUND = new HashMap<>();
+    static HashMap<String, Character> HANGUL_LAST_SOUND = new HashMap<>();
+    private static HashMap<String, String> HANGUL_EXPRESS_KEYWORD = new HashMap<>();
 
     //숫자 딕셔너리
-    public static HashMap<String, Character> NUMBER = new HashMap<>();
+    static HashMap<String, Character> NUMBER = new HashMap<>();
 
     //알파벳 딕셔너리
-    public static HashMap<String, Character> ALPHABET = new HashMap<>();
+    static HashMap<String, Character> ALPHABET = new HashMap<>();
 
     //특수문자 딕셔너리
-    public static HashMap<String, String> SPECIAL = new HashMap<>();
+    //public static HashMap<String, String> SPECIAL = new HashMap<>();
 
     //Static 상수들
-    public static final String WHITE_SPACE = "000000";
-    public static final String DOUBLE_CHAR = "000001";
-    public static final String ALPHABET_SIGN = "001011";
+    //public static final String WHITE_SPACE = "000000";
+    //public static final String DOUBLE_CHAR = "000001";
+    //public static final String ALPHABET_SIGN = "001011";
 
 
 
