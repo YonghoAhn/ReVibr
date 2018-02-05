@@ -1,4 +1,4 @@
-package com.valuecomposite.revibr.utils;
+package com.valuecomposite.revibr.utils.Messages;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.valuecomposite.revibr.Activities.ReceiveActivity;
+import com.valuecomposite.revibr.utils.DataManager;
 
 
 public class MMSMon extends Thread {
@@ -91,31 +92,31 @@ public class MMSMon extends Thread {
 
     private String getAddressNumber(Context context, int id)
     {
-        String selectionAdd = new String("msg_id=" + id);
-        String uriStr = MessageFormat.format("content://mms/{0}/addr", Integer.toString(id)); // id를 형변환해주지 않으면, 천단위 넘어가면 콤마가 붙으므로 오류가 나게 된다.
+        String addrSelection = "type=137 AND msg_id=" + id;
+        String uriStr = MessageFormat.format("content://mms/{0}/addr", id);
         Uri uriAddress = Uri.parse(uriStr);
-        Cursor cAdd = context.getContentResolver().query(uriAddress, null, selectionAdd, null, null);
-        String name = null;
-        if (cAdd.moveToFirst()) {
+        String[] columns = { "address" };
+        Cursor cursor = context.getContentResolver().query(uriAddress, columns,
+                addrSelection, null, null);
+        String address = "";
+        String val;
+        if (cursor.moveToFirst()) {
             do {
-                String number = cAdd.getString(cAdd.getColumnIndex("address"));
-                if (number != null) {
-                    try {
-                        Long.parseLong(number.replace("-", ""));
-                        name = number;
-                    }
-                    catch (NumberFormatException nfe) {
-                        if (name == null) {
-                            name = number;
-                        }
-                    }
+                val = cursor.getString(cursor.getColumnIndex("address"));
+                if (val != null) {
+                    address = val;
+                    // Use the first one found if more than one
+                    break;
                 }
-            } while (cAdd.moveToNext());
+            } while (cursor.moveToNext());
         }
-        if (cAdd != null) {
-            cAdd.close();
+        if (cursor != null) {
+            cursor.close();
         }
-        return name;
+        // return address.replaceAll("[^0-9]", "");
+        Log.d("MisakaMOE",address);
+        Log.d("MisakaMOE_",String.valueOf(id));
+        return address;
     }
 
     @Override
@@ -156,6 +157,7 @@ public class MMSMon extends Thread {
                         Cursor cur = context.getContentResolver().query(uriPart, null, selectionPart, null, null);
                         if (cur.moveToFirst()) {
                             do {
+                                if(idList.contains(mmsId)) break;
                                 String partId = cur.getString(cur.getColumnIndex("_id"));
                                 String type = cur.getString(cur.getColumnIndex("ct"));
                                 if ("text/plain".equals(type)) {
@@ -175,7 +177,7 @@ public class MMSMon extends Thread {
                                             idList.add(mmsId);
                                         } else {
                                             String formKey = StorageManager.getDataString(context, "FORMKEY", "");
-                                            if ( formKey.length() > 0 ) {
+                                            //if ( formKey.length() > 0 ) {
 
                                                 int numberIndex = StorageManager.getDataInt(context,  "NUMBERINDEX", 0);
                                                 int messageIndex = StorageManager.getDataInt(context, "MESSAGEINDEX", 1);
@@ -192,6 +194,7 @@ public class MMSMon extends Thread {
 
 
                                                     Intent receiveIntent = new Intent(context, ReceiveActivity.class);
+                                                    receiveIntent.putExtra("IsReceiver",true);
                                                     receiveIntent.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
                                                     receiveIntent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                                                     context.startActivity(receiveIntent);
@@ -203,7 +206,7 @@ public class MMSMon extends Thread {
 
                                                 }
 
-                                            }
+                                            //}
                                         }
                                     }
 

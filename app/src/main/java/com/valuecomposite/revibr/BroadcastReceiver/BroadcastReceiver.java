@@ -50,6 +50,7 @@ public class BroadcastReceiver extends android.content.BroadcastReceiver {
             DataManager.CurrentSMS.setTime(time);
             DataManager.CurrentSMS.setDisplayName(person);
             //receiveIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            receiveIntent.putExtra("IsReceiver",true);
             receiveIntent.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
             receiveIntent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 

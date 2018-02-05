@@ -2,15 +2,16 @@
  * Created by ayh07 on 8/13/2017.
  */
 
-package com.valuecomposite.revibr.utils;
+package com.valuecomposite.revibr.utils.Braille;
 
 import android.util.Log;
 
 import com.valuecomposite.revibr.Activities.SendActivity;
+import com.valuecomposite.revibr.utils.HangulSupport;
 
-import static com.valuecomposite.revibr.utils.BrailleInput.FLAG.FLAG_EMPTY;
-import static com.valuecomposite.revibr.utils.BrailleInput.FLAG.FLAG_ENGLISH;
-import static com.valuecomposite.revibr.utils.BrailleInput.FLAG.FLAG_NUMBER;
+import static com.valuecomposite.revibr.utils.Braille.BrailleInput.FLAG.FLAG_EMPTY;
+import static com.valuecomposite.revibr.utils.Braille.BrailleInput.FLAG.FLAG_ENGLISH;
+import static com.valuecomposite.revibr.utils.Braille.BrailleInput.FLAG.FLAG_NUMBER;
 
 //Temp
 public class BrailleInput {

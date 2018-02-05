@@ -1,42 +1,23 @@
 package com.valuecomposite.revibr.Activities;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.*;
-import android.content.pm.PackageManager;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GestureDetectorCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.valuecomposite.revibr.utils.ApplicationController;
-import com.valuecomposite.revibr.utils.BrailleOutput;
-import com.valuecomposite.revibr.utils.ContactManager;
+import com.valuecomposite.revibr.R;
+import com.valuecomposite.revibr.databinding.ActivityPhonebookBinding;
+import com.valuecomposite.revibr.utils.Braille.BrailleOutput;
 import com.valuecomposite.revibr.utils.DataManager;
 import com.valuecomposite.revibr.utils.Initializer;
 import com.valuecomposite.revibr.utils.PhoneBookItem;
-import com.valuecomposite.revibr.R;
-import com.valuecomposite.revibr.utils.SMSItem;
-import com.valuecomposite.revibr.utils.TTSManager;
-import com.valuecomposite.revibr.databinding.ActivityPhonebookBinding;
-import com.valuecomposite.revibr.utils.Vibrator;
+import com.valuecomposite.revibr.utils.Messages.SMSItem;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-import static com.valuecomposite.revibr.utils.DataManager.mContext;
-
-/**
- * Created by ayh07 on 8/10/2017.
- */
 
 public class PhoneBook extends BaseActivity{
     //region variables
@@ -51,7 +32,7 @@ public class PhoneBook extends BaseActivity{
     {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_phonebook);
-        mContext = getApplicationContext();
+        //mContext = getApplicationContext();
         gDetector = new GestureDetectorCompat(this,this);
         Initialize();
         //getSMSTest();
@@ -143,17 +124,17 @@ public class PhoneBook extends BaseActivity{
     public boolean onFling(MotionEvent e1, MotionEvent e2, float v, float v1) {
         if (Math.abs(e1.getX() - e2.getX()) < GESTURE_LIMIT && (e1.getY() - e2.getY() > ZERO)) {
             //위로 드래그
-            Toast.makeText(mContext, "UP", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "UP", Toast.LENGTH_SHORT).show();
         } else if (Math.abs(e1.getX() - e2.getX()) < GESTURE_LIMIT && (e2.getY() - e1.getY() > ZERO)) {
             //아래로 드래그
-            Toast.makeText(mContext, "DOWN", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "DOWN", Toast.LENGTH_SHORT).show();
         } else if (Math.abs(e1.getY() - e2.getY()) < GESTURE_LIMIT && (e1.getX() - e2.getX() > ZERO)) {
             //오른쪽 드래그
-            Toast.makeText(mContext, "RIGHT", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "RIGHT", Toast.LENGTH_SHORT).show();
             nextDisplay('n');
         } else if (Math.abs(e1.getY() - e2.getY()) < GESTURE_LIMIT && (e2.getX() - e1.getX() > ZERO)) {
             //왼쪽 드래그
-            Toast.makeText(mContext, "LEFT", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "LEFT", Toast.LENGTH_SHORT).show();
             nextDisplay('b');
         } else if ((e2.getX() - e1.getX() > ZERO) && (e2.getY() - e1.getY() > ZERO)) {
             //오른쪽 아래 대각선 드래그
@@ -169,6 +150,7 @@ public class PhoneBook extends BaseActivity{
             Toast.makeText(getApplicationContext(), "message receiving activity", Toast.LENGTH_SHORT).show();
             DataManager.CurrentSMS = new SMSItem("",DataManager.PBItems.get(PhoneBookPosition).getPhoneNumber(),binding.name.getText().toString(),"");
             Intent scActivityIntent = new Intent(getApplicationContext(), ReceiveActivity.class);
+            scActivityIntent.putExtra("IsReceiver",false);
             scActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getApplicationContext().startActivity(scActivityIntent);
         }
@@ -182,7 +164,7 @@ public class PhoneBook extends BaseActivity{
         }
         else
         {
-            Toast.makeText(mContext, "nothing on gesture", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "nothing on gesture", Toast.LENGTH_SHORT).show();
         }
         return true;
     }

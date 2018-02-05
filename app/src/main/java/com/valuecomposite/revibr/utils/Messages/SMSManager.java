@@ -1,4 +1,4 @@
-package com.valuecomposite.revibr.utils;
+package com.valuecomposite.revibr.utils.Messages;
 
 import android.content.ContentResolver;
 import android.content.Context;

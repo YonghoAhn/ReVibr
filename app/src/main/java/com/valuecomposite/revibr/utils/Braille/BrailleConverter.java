@@ -1,4 +1,6 @@
-package com.valuecomposite.revibr.utils;
+package com.valuecomposite.revibr.utils.Braille;
+
+import com.valuecomposite.revibr.utils.DataManager;
 
 import java.util.Map;
 

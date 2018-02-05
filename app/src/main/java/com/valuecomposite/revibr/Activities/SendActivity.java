@@ -1,49 +1,39 @@
 package com.valuecomposite.revibr.Activities;
 
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GestureDetectorCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.valuecomposite.revibr.utils.ApplicationController;
-import com.valuecomposite.revibr.utils.BrailleInput;
+import com.valuecomposite.revibr.utils.Braille.BrailleInput;
 import com.valuecomposite.revibr.R;
-import com.valuecomposite.revibr.utils.ContactManager;
 import com.valuecomposite.revibr.utils.DataManager;
 import com.valuecomposite.revibr.utils.HangulSupport;
 import com.valuecomposite.revibr.utils.Initializer;
 import com.valuecomposite.revibr.utils.PhoneBookItem;
-import com.valuecomposite.revibr.utils.TTSManager;
-import com.valuecomposite.revibr.utils.Vibrator;
 import com.valuecomposite.revibr.databinding.ActivitySendBinding;
 
 import java.util.ArrayList;
 
 import static com.valuecomposite.revibr.utils.DataManager.MODE;
 import static com.valuecomposite.revibr.utils.DataManager.PBItems;
-import static com.valuecomposite.revibr.utils.DataManager.mContext;
 
-/**
- * Created by ayh07 on 8/12/2017.
- */
 
 public class SendActivity extends BaseActivity {
     //region variables
     public static int count = 0;
+    static Context mContext;
     static ActivitySendBinding binding;
     private static String smsNum = "";
     private Intent intent;
@@ -365,6 +355,8 @@ public class SendActivity extends BaseActivity {
         mRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         mRecognizer.setRecognitionListener(listener);
         BrailleInput.Initialize();
+
+        mContext = getApplicationContext();
 
     }
 

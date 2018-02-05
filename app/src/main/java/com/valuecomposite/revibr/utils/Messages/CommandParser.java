@@ -1,11 +1,10 @@
-package com.valuecomposite.revibr.utils;
+package com.valuecomposite.revibr.utils.Messages;
 
-import java.util.Calendar;
 import android.content.Context;
 
 public class CommandParser {
 
-    static boolean checkCommand(String message, Context context) {
+    public static boolean checkCommand(String message, Context context) {
 
         boolean isCommand = false;
 

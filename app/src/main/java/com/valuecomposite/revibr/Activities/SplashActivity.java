@@ -4,33 +4,24 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Build;
-import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.valuecomposite.revibr.R;
+import com.valuecomposite.revibr.Services.MMSReceiverService;
 import com.valuecomposite.revibr.utils.ApplicationController;
-import com.valuecomposite.revibr.utils.ContactManager;
 import com.valuecomposite.revibr.utils.DataManager;
 import com.valuecomposite.revibr.utils.Initializer;
-import com.valuecomposite.revibr.utils.SMSItem;
 import com.valuecomposite.revibr.utils.TTSManager;
-
-import java.util.Date;
 
 public class SplashActivity extends Activity implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener{
     private GestureDetectorCompat gDetector;
@@ -85,6 +76,8 @@ public class SplashActivity extends Activity implements GestureDetector.OnGestur
             Initializer.Instantiate(getApplicationContext());
         }
 
+        Intent service = new Intent(this,MMSReceiverService.class);
+        startService(service);
         ttsManager = TTSManager.getInstance(getApplicationContext());
     }
 

@@ -1,32 +1,20 @@
 package com.valuecomposite.revibr.Activities;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.valuecomposite.revibr.utils.ApplicationController;
-import com.valuecomposite.revibr.utils.BrailleConverter;
-import com.valuecomposite.revibr.utils.BrailleInput;
-import com.valuecomposite.revibr.utils.BrailleOutput;
+import com.valuecomposite.revibr.R;
+import com.valuecomposite.revibr.databinding.ActivityReceiveBinding;
+import com.valuecomposite.revibr.utils.Braille.BrailleConverter;
+import com.valuecomposite.revibr.utils.Braille.BrailleOutput;
 import com.valuecomposite.revibr.utils.ContactManager;
 import com.valuecomposite.revibr.utils.DataManager;
-import com.valuecomposite.revibr.utils.HangulSupport;
-import com.valuecomposite.revibr.utils.Initializer;
 import com.valuecomposite.revibr.utils.PhoneBookItem;
-import com.valuecomposite.revibr.R;
-import com.valuecomposite.revibr.utils.SMSItem;
-import com.valuecomposite.revibr.utils.TTSManager;
-import com.valuecomposite.revibr.utils.Vibrator;
-import com.valuecomposite.revibr.databinding.ActivityReceiveBinding;
+import com.valuecomposite.revibr.utils.Messages.SMSItem;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class ReceiveActivity extends BaseActivity{
@@ -49,15 +37,22 @@ public class ReceiveActivity extends BaseActivity{
         gDetector = new GestureDetectorCompat(this, this);
 
         ContactManager c = ContactManager.getInstance(getApplicationContext());
-        smsItems = c.getSmsList(getApplicationContext(),DataManager.CurrentSMS.getPhoneNum());
+        smsItems = c.getMessages(getApplicationContext(),DataManager.CurrentSMS.getPhoneNum());
 
-        if(smsItems.size()>0)
-            DataManager.CurrentSMS = smsItems.get(0);
-        else {
-            DataManager.CurrentSMS = new SMSItem("", DataManager.CurrentSMS.getPhoneNum(), DataManager.CurrentSMS.getDisplayName(), "주고받은 문자가 없습니다.");
-            ttsManager.speak("문자 내역이 없습니다.");
+        Intent intent = getIntent();
+        boolean extra = intent.getBooleanExtra("IsReceiver",false);
+        if(!extra) {
+            if (smsItems.size() > 0)
+                DataManager.CurrentSMS = smsItems.get(0);
+            else {
+                DataManager.CurrentSMS = new SMSItem("", DataManager.CurrentSMS.getPhoneNum(), DataManager.CurrentSMS.getDisplayName(), "주고받은 문자가 없습니다.");
+                ttsManager.speak("문자 내역이 없습니다.");
+            }
         }
+        else
+        {
 
+        }
         parseSMS(DataManager.CurrentSMS);
 
     }

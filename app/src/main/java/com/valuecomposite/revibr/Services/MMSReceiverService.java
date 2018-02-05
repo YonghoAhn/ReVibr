@@ -5,7 +5,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import com.valuecomposite.revibr.utils.MMSMon;
+import com.valuecomposite.revibr.utils.Messages.MMSMon;
 
 public class MMSReceiverService extends Service {
     private MMSMon mmsMon;
@@ -28,6 +28,8 @@ public class MMSReceiverService extends Service {
     public void onCreate(){
 // 서비스가 처음으로 생성되면 호출됩니다. 이 메소드 안에서 초기의 설정 작업을 하면되고 서비스가 이미 실행중이면 이 메소드는 호출되지 않습니다.
         mmsMon = new MMSMon(getApplicationContext());
+        mmsMon.setDaemon(true);
+        mmsMon.start();
         mmsMon.startMonitor();
     }
 

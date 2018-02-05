@@ -1,6 +1,8 @@
-package com.valuecomposite.revibr.utils;
+package com.valuecomposite.revibr.utils.Braille;
 
 import android.util.Log;
+
+import com.valuecomposite.revibr.utils.HangulSupport;
 
 import java.util.ArrayList;
 
@@ -121,7 +123,7 @@ public class BrailleOutput {
                     }
                 }
             } catch (Exception e) {
-                Log.d("MisakaMOE", "Error is " + e.getMessage().toString());
+                Log.d("MisakaMOE", "Error is " + e.getMessage());
                 //Toast.makeText(getApplicationContext(),e.getMessage().toString(),Toast.LENGTH_SHORT).show();
             }
         }
