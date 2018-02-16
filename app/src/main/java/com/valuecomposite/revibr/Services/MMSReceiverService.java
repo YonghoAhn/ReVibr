@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.IBinder;
@@ -24,6 +25,7 @@ public class MMSReceiverService extends Service {
 
     private CountDownTimer countDownTimer;
 
+    private ServiceRestartBroadcastReceiver pReceiver;
 
 
     @Override
@@ -63,6 +65,13 @@ public class MMSReceiverService extends Service {
         mmsMon.setDaemon(true);
         mmsMon.start();
         mmsMon.startMonitor();
+
+        pReceiver = new ServiceRestartBroadcastReceiver();
+
+        IntentFilter pFilter = new IntentFilter(Intent.ACTION_PACKAGE_REPLACED);
+
+        pFilter.addDataScheme("package");
+        
         unregisterRestartAlarm();
         initData();
     }
@@ -78,6 +87,8 @@ public class MMSReceiverService extends Service {
          * 서비스 종료 시 알람 등록을 통해 서비스 재 실행
          */
         registerRestartAlarm();
+
+
 
     }
 
@@ -99,6 +110,8 @@ public class MMSReceiverService extends Service {
         alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,firstTime,1*1000,sender);
 
     }
+
+
 
     private void unregisterRestartAlarm(){
 

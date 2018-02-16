@@ -6,9 +6,7 @@ import android.content.Intent;
 
 import com.valuecomposite.revibr.Services.MMSReceiverService;
 
-/**
- * Created by misakamoe on 2018. 2. 16..
- */
+
 
 public class ServiceRestartBroadcastReceiver extends BroadcastReceiver {
     @Override
@@ -17,6 +15,14 @@ public class ServiceRestartBroadcastReceiver extends BroadcastReceiver {
         if((intent.getAction().equals("ACTION.RESTART.PersistentService"))||(intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)))
         {
             Intent i = new Intent(context, MMSReceiverService.class);
+            context.startService(i);
+        }
+        //App was updated
+        if(intent.getAction().equals(Intent.ACTION_PACKAGE_REPLACED)){
+
+            // 앱이 업데이트 되었을 때
+            Intent i = new Intent(context, MMSReceiverService.class);
+
             context.startService(i);
         }
     }

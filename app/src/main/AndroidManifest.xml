@@ -45,7 +45,7 @@
         </receiver>
 
         <receiver
-            android:name="com.valuecomposite.revibr.BroadcastReceiver.ServiceRestartBroadcastReceiver"
+            android:name=".BroadcastReceiver.ServiceRestartBroadcastReceiver"
             android:enabled="true"
             android:exported="false"
             android:label="ServiceRestartBroadcastReceiver"
@@ -53,6 +53,8 @@
             <intent-filter>
                <action android:name="ACTION.RESTART.PersistentService" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.PACKAGE_REPLACED"/>
+                <data android:scheme="package"/>
             </intent-filter>
         </receiver>
 
