@@ -9,6 +9,7 @@ import android.telephony.SmsMessage;
 import android.widget.Toast;
 
 import com.valuecomposite.revibr.Activities.ReceiveActivity;
+import com.valuecomposite.revibr.Services.MMSReceiverService;
 import com.valuecomposite.revibr.utils.DataManager;
 import com.valuecomposite.revibr.utils.PhoneBookItem;
 
@@ -56,13 +57,7 @@ public class BroadcastReceiver extends android.content.BroadcastReceiver {
 
             context.startActivity(receiveIntent);
         }
-        else if(action.equals(Intent.ACTION_HEADSET_PLUG))
-        {
-            int state = intent.getIntExtra("state", -1);
-            //Earphone attached
-            //Earphone dettached
-            DataManager.IsEarphoneConnected = state == 1;
-        }
+
         else if (action.equals("SMS_SENT_ACTION")) {
             switch (getResultCode()) {
                 case Activity.RESULT_OK:
