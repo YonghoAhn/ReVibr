@@ -7,13 +7,12 @@ import android.util.Log;
 
 import com.valuecomposite.revibr.Services.MMSReceiverService;
 
+public class AlaramReceiver extends BroadcastReceiver {
 
-
-public class ServiceRestartBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-            Log.d("MisakaMOE","Called_SERVICE");
-            Intent i = new Intent(context, MMSReceiverService.class);
-            context.startService(i);
+        Log.d("MisakaMOE","Called_SERVICE");
+        Intent i = new Intent(context, MMSReceiverService.class);
+        context.startService(i);
     }
 }

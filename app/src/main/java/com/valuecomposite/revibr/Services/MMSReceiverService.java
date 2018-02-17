@@ -15,6 +15,7 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import com.valuecomposite.revibr.BroadcastReceiver.ServiceRestartBroadcastReceiver;
+import com.valuecomposite.revibr.R;
 import com.valuecomposite.revibr.utils.Messages.MMSMon;
 
 public class MMSReceiverService extends Service {
@@ -40,14 +41,23 @@ public class MMSReceiverService extends Service {
          */
         NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         Notification notification;
-        notification = new Notification.Builder(getApplicationContext())
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            notification = new Notification.Builder(getApplicationContext())
+                    .setContentTitle("")
+                    .setContentText("")
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .build();
+        }
+        else
+        {
+            notification = new Notification.Builder(getApplicationContext())
                     .setContentTitle("")
                     .setContentText("")
                     .build();
+        }
 
-
-        nm.notify(startId, notification);
-        nm.cancel(startId);
+        nm.notify("MisakaMOE",startId, notification);
+        nm.cancelAll();
 
         return START_REDELIVER_INTENT;
     }
@@ -104,7 +114,7 @@ public class MMSReceiverService extends Service {
 
         AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
 
-        /**
+        /*
          * 알람 등록
          */
         alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,firstTime,1*1000,sender);
