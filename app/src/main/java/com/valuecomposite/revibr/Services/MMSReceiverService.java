@@ -81,7 +81,7 @@ public class MMSReceiverService extends Service {
         IntentFilter pFilter = new IntentFilter(Intent.ACTION_PACKAGE_REPLACED);
 
         pFilter.addDataScheme("package");
-        
+
         unregisterRestartAlarm();
         initData();
     }

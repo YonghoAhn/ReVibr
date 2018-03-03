@@ -160,6 +160,7 @@ public class PhoneBook extends BaseActivity{
             ttsManager.speak(binding.name.getText().toString() + " " + binding.number.getText().toString()); //이름 번호 말한다
         } else if((e1.getX() - e2.getX() > 0)&&(e1.getY()-e2.getY() < 0)){
             //왼쪽 아래 드래그
+            ttsManager.speak("뒤로 가기");
             finish();
         }
         else

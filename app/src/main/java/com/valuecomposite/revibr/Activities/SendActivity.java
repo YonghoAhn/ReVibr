@@ -38,6 +38,7 @@ public class SendActivity extends BaseActivity {
     private static String smsNum = "";
     private Intent intent;
     private SpeechRecognizer mRecognizer;
+    private static boolean isChanged = false;
     private RecognitionListener listener = new RecognitionListener() {
         @Override
         public void onReadyForSpeech(Bundle bundle) {}
@@ -224,52 +225,49 @@ public class SendActivity extends BaseActivity {
     }
 
     public static void Delete() {
-        if(BrailleInput.Delete() == -1)
-        { //Motion Delete, and its failed, we should remove character{
+        if(BrailleInput.Delete() == -1) {
+            //Motion Delete, and its failed, we should remove character
             //but wait
             //then divide char to cho-joong-jong, and remove some char and re-assemble it
-            try {
-                char lastChar = binding.txtSend.getText().charAt(binding.txtSend.getText().length()-1);
-                if(HangulSupport.IsHangul(lastChar)) //try divide when it was hangul
-                {
-                    char[] chars = HangulSupport.DivideHangulChar(lastChar);
-                    //if char was just chosung, then return {'r',' ',' '}
-                    //if char was cho+jung then return {'r','r',' '}
-                    //else, return {'r','r','r'}
-                    //so we need just remove last char.
-                    // composition with char array[length-2]
-                    if(chars[0]!=' ' && chars[1] != ' ' && chars[2] != ' ') //cho, joong, jong is not empty
+            if (isChanged) { //is Something else added,
+                try {
+                    char lastChar = binding.txtSend.getText().charAt(binding.txtSend.getText().length() - 1);
+                    if (HangulSupport.IsHangul(lastChar)) //try divide when it was hangul
                     {
-                        AddText(Character.toString(HangulSupport.CombineHangul(new char[] {chars[0],chars[1],' '})));
-                        BrailleInput.SetChosung(chars[0]);
-                        BrailleInput.SetJoongsung(chars[1]);
-                    }
-                    else if(chars[0] !=' ' && chars[1] != ' ' && chars[2] == ' ') //cho, joong is not empty, jong is empty
+                        char[] chars = HangulSupport.DivideHangulChar(lastChar);
+                        //if char was just chosung, then return {'r',' ',' '}
+                        //if char was cho+jung then return {'r','r',' '}
+                        //else, return {'r','r','r'}
+                        //so we need just remove last char.
+                        // composition with char array[length-2]
+                        if (chars[0] != ' ' && chars[1] != ' ' && chars[2] != ' ') //cho, joong, jong is not empty
+                        {
+                            AddText(Character.toString(HangulSupport.CombineHangul(new char[]{chars[0], chars[1], ' '})));
+                            BrailleInput.SetChosung(chars[0]);
+                            BrailleInput.SetJoongsung(chars[1]);
+                        } else if (chars[0] != ' ' && chars[1] != ' ' && chars[2] == ' ') //cho, joong is not empty, jong is empty
+                        {
+                            AddText(Character.toString(chars[0])); //Add Chosung using addtext
+                            BrailleInput.SetChosung(chars[0]);
+                        } else if (chars[0] != ' ' && chars[1] == ' ' && chars[2] == ' ') //cho is not empty, joong+jong was empty.
+                        {
+                            binding.txtSend.setText(binding.txtSend.getText().toString().substring(0, binding.txtSend.getText().length() - 1)); //Remove one char : 초성지우기
+                            BrailleInput.SetChosung(' ');
+                            isChanged = false;
+                        }
+                    } else //character was not hangul.
                     {
-                        AddText(Character.toString(chars[0])); //Add Chosung using addtext
-                        BrailleInput.SetChosung(chars[0]);
+                        binding.txtSend.setText(binding.txtSend.getText().toString().substring(0, binding.txtSend.getText().length() - 1));
+                        //just remove it
                     }
-                    else if(chars[0]!=' ' && chars[1] == ' ' && chars[2] == ' ') //cho is not empty, joong+jong was empty.
-                    {
-                        binding.txtSend.setText(binding.txtSend.getText().toString().substring(0, binding.txtSend.getText().length() - 1)); //Remove one char : 초성지우기
-                        BrailleInput.SetChosung(' ');
-                    }
+                    ttsManager.speak("지움");
+                } catch (Exception e) {
+                    Log.d("MisakaMOE", e.getMessage());
                 }
-                else //character was not hangul.
-                {
-                    binding.txtSend.setText(binding.txtSend.getText().toString().substring(0, binding.txtSend.getText().length() - 1));
-                    //just remove it
-                }
-                ttsManager.speak("지움");
             }
-            catch (Exception e)
-            {
-                Log.d("MisakaMOE",e.getMessage());
+            else {
+                Delete(true);
             }
-        }
-        else
-        {
-
         }
     }
 
@@ -392,12 +390,14 @@ public class SendActivity extends BaseActivity {
             colorIdentify(count,true);
             vibrator.vibrate(300);
             BrailleInput.Input(true);
+            isChanged=true;
         } else if (Math.abs(e1.getX() - e2.getX()) < GESTURE_LIMIT && (e2.getY() - e1.getY() > GESTURE_LIMIT)) {
             //아래로 드래그
             Toast.makeText(mContext, "DOWN", Toast.LENGTH_SHORT).show();
             colorIdentify(count,false);
             vibrator.vibrate(100);
             BrailleInput.Input(false);
+            isChanged=true;
         } else if (Math.abs(e1.getY() - e2.getY()) < GESTURE_LIMIT && (e1.getX() - e2.getX() > ZERO)) {
             //왼쪽 드래그
             Toast.makeText(mContext, "LEFT", Toast.LENGTH_SHORT).show();
@@ -460,6 +460,7 @@ public class SendActivity extends BaseActivity {
             }
         } else if((e1.getX() - e2.getX() > 0)&&(e1.getY()-e2.getY() < 0)){
             //왼쪽 아래 드래그
+            ttsManager.speak("뒤로 가기");
             finish();
         }
         else if (Math.abs(e1.getX() - e2.getX()) > 250 && (e1.getY() - e2.getY() > 0) && (e1.getX() - e2.getX()) < 0 )

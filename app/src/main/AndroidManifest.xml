@@ -47,10 +47,12 @@
             android:value="@integer/google_play_services_version" />
 
         <activity android:name=".Activities.PhoneBook" />
+
         <activity
             android:name=".Activities.ReceiveActivity"
             android:clearTaskOnLaunch="true"
             android:launchMode="singleTask" />
+
         <activity
             android:name=".Activities.SendActivity"
             android:clearTaskOnLaunch="true" />
@@ -62,7 +64,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.SearchActivity" />
 
         <service android:name=".Services.MMSReceiverService" />
 

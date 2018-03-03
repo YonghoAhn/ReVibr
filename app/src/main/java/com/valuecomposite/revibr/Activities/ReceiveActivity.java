@@ -16,6 +16,7 @@ import com.valuecomposite.revibr.utils.PhoneBookItem;
 import com.valuecomposite.revibr.utils.Messages.SMSItem;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ReceiveActivity extends BaseActivity{
 
@@ -48,10 +49,6 @@ public class ReceiveActivity extends BaseActivity{
                 DataManager.CurrentSMS = new SMSItem("", DataManager.CurrentSMS.getPhoneNum(), DataManager.CurrentSMS.getDisplayName(), "주고받은 문자가 없습니다.");
                 ttsManager.speak("문자 내역이 없습니다.");
             }
-        }
-        else
-        {
-
         }
         parseSMS(DataManager.CurrentSMS);
 
@@ -105,7 +102,8 @@ public class ReceiveActivity extends BaseActivity{
 
     public void display(String time, String name, String number, String content)
     {
-        binding.time.setText(time);
+        Date curDate = new Date(time);
+        binding.time.setText(curDate.toString());
         binding.name.setText(name);
         binding.number.setText(number);
         binding.body.setText(content);
@@ -298,6 +296,7 @@ public class ReceiveActivity extends BaseActivity{
             nextDisplay(1);
         } else if((e1.getX() - e2.getX() > 0)&&(e1.getY()-e2.getY() < 0)){
             //왼쪽 아래 드래그
+            ttsManager.speak("뒤로 가기");
             finish();
         }
         return true;

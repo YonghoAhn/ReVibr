@@ -36,7 +36,7 @@ public class SplashActivity extends Activity implements GestureDetector.OnGestur
         mTracker = application.getDefaultTracker();
         gDetector = new GestureDetectorCompat(this,this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)   != PackageManager.PERMISSION_GRANTED ||
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)   != PackageManager.PERMISSION_GRANTED ||
                     ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)           != PackageManager.PERMISSION_GRANTED ||
                     ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)      != PackageManager.PERMISSION_GRANTED ||
                     ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)           != PackageManager.PERMISSION_GRANTED ||

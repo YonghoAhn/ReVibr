@@ -43,9 +43,7 @@ public class ContactManager {
         String[] projection = new String[]{
                 ContactsContract.CommonDataKinds.Phone.CONTACT_ID, // 연락처 ID -> 사진 정보 가져오는데 사용
                 ContactsContract.CommonDataKinds.Phone.NUMBER,        // 연락처
-                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME}; // 연락처 이름.
-
-        String[] selectionArgs = null;
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME}; // 연락처 이름
 
         String sortOrder = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
                 + " COLLATE LOCALIZED ASC";
@@ -63,12 +61,9 @@ public class ContactManager {
                 contact.setDisplayName(contactCursor.getString(2));
                 contact.setChosung(HangulSupport.CreateChosungString(contact.getDisplayName()));
                 contactlist.add(contact);
-
             } while (contactCursor.moveToNext());
         }
-
         return contactlist;
-
     }
 
     public ArrayList<SMSItem> getMessages(Context context, String number)
@@ -92,25 +87,13 @@ public class ContactManager {
                 sms.setBody(c.getString(c.getColumnIndexOrThrow("body")));
                 sms.setTime(c.getString(c.getColumnIndexOrThrow("date")));
                 sms.setPhoneNum(c.getString(c.getColumnIndexOrThrow("address")));
-                //smsList.add(sms);
                 if (sms.getPhoneNum().equals(number)) {
                     smsItems.add(sms);
                 }
-                String address = c.getString(c.getColumnIndexOrThrow("address"));
-                String mbody = c.getString(c.getColumnIndexOrThrow("body"));
-                String mdate = c.getString(c.getColumnIndexOrThrow("date"));
-                Date dt = new Date(Long.valueOf(mdate));
-                StringBuilder msgString = new StringBuilder();
-                msgString.append(address + "<-||->");
-                msgString.append(mbody + "<-||->");
-                msgString.append(dt + "<-||->");
-                msgString.append(mdate + "<--!-->");
-                //Toast.makeText(context,msgString.toString(),Toast.LENGTH_SHORT).show();
                 c.moveToNext();
             }
         }
         c.close();
-
 
         return smsItems;
     }
@@ -121,92 +104,58 @@ public class ContactManager {
         final String[] projection = new String[] {"_id", "ct_t", "date"};
         Uri uri = Uri.parse("content://mms/inbox");
         Cursor query = context.getContentResolver().query(uri, projection, null, null, "date DESC");
+        if(query!=null && query.getCount()>0) {
+            if (query.moveToFirst()) {
+                do {
+                    String mmsId = query.getString(query.getColumnIndex("_id"));
+                    String date = query.getString(query.getColumnIndex("date"));
+                    String mmsType = query.getString(query.getColumnIndex("ct_t"));
 
-        if ( query.moveToFirst() ) {
-
-            do {
-
-                String mmsId = query.getString(query.getColumnIndex("_id"));
-                String date = query.getString(query.getColumnIndex("date"));
-
-                //if ( idList.contains(mmsId) ) continue;
-
-                String mmsType = query.getString(query.getColumnIndex("ct_t"));
-                if (mmsType != null && mmsType.startsWith("application/vnd.wap.multipart")) {
-                    // MMS인 것을 한번 더 확인
-
-                    String incommingNumber = getAddressNumber(context, Integer.parseInt(mmsId));
-                 //   Log.d("MisakaMOE",incommingNumber);
-                    if (incommingNumber.equals(number)) {
-                        String messageBody = "";
-                        String selectionPart = "mid=" + mmsId;
-                        Uri uriPart = Uri.parse("content://mms/part");
-                        Cursor cur = context.getContentResolver().query(uriPart, null, selectionPart, null, null);
-                        if (cur.moveToFirst()) {
-                            do {
-                                // if(idList.contains(mmsId)) break;
-
-                                String partId = cur.getString(cur.getColumnIndex("_id"));
-                                String type = cur.getString(cur.getColumnIndex("ct"));
-                                if ("text/plain".equals(type)) {
-                                    String data = cur.getString(cur.getColumnIndex("_data"));
-
-                                    if (data != null) {
-                                        // implementation of this method below
-                                        messageBody = getMmsText(context, partId);
-                                    } else {
-                                        messageBody = cur.getString(cur.getColumnIndex("text"));
-                                    }
-
-                                    if (incommingNumber.length() > 0 && messageBody.length() > 0) {
-
-                                        if (CommandParser.checkCommand(messageBody, context)) {
-                                            //idList.add(mmsId);
+                    if (mmsType != null && mmsType.startsWith("application/vnd.wap.multipart")) {
+                        // MMS인 것을 한번 더 확인
+                        String incommingNumber = getAddressNumber(context, Integer.parseInt(mmsId));
+                        if (incommingNumber.equals(number)) {
+                            String messageBody;
+                            String selectionPart = "mid=" + mmsId;
+                            Uri uriPart = Uri.parse("content://mms/part");
+                            Cursor cur = context.getContentResolver().query(uriPart, null, selectionPart, null, null);
+                            if (cur.moveToFirst()) {
+                                do {
+                                    String partId = cur.getString(cur.getColumnIndex("_id"));
+                                    String type = cur.getString(cur.getColumnIndex("ct"));
+                                    if ("text/plain".equals(type)) {
+                                        String data = cur.getString(cur.getColumnIndex("_data"));
+                                        if (data != null) {
+                                            messageBody = getMmsText(context, partId);
                                         } else {
-                                            String formKey = StorageManager.getDataString(context, "FORMKEY", "");
-                                            //if ( formKey.length() > 0 ) {
+                                            messageBody = cur.getString(cur.getColumnIndex("text"));
+                                        }
+
+                                        if (incommingNumber.length() > 0 && messageBody.length() > 0) {
 
                                             int numberIndex = StorageManager.getDataInt(context, "NUMBERINDEX", 0);
                                             int messageIndex = StorageManager.getDataInt(context, "MESSAGEINDEX", 1);
-                                            int dateIndex = StorageManager.getDataInt(context, "DATEINDEX", 2);
 
-                                            if ( numberIndex != messageIndex ) {
-                                                //idList.add(mmsId);
+                                            if (numberIndex != messageIndex) {
                                                 SMSItem smsItem = new SMSItem();
                                                 smsItem.setPhoneNum(incommingNumber);
                                                 smsItem.setBody(messageBody);
                                                 smsItem.setTime(date);
-
-                                               // Log.d("MisakaMOE",incommingNumber);
-                                                Log.d("MisakaMOE",messageBody);
                                                 result.add(smsItem);
-                                                //신규 알리미 서비스
-                                                // 여기서 필요한 처리를 해준다.
-                                                // incommingNumber : 발신번호
-                                                // messageBody : 수신내용
-                                                // 수신날짜(타임스탬프) : date
-
                                             }
-
-                                            //}
                                         }
                                     }
-
-                                }
-                            } while (cur.moveToNext());
-
-                            cur.close();
+                                } while (cur.moveToNext());
+                                cur.close();
+                            }
                         }
-
-
                     }
-                }
-            } while (query.moveToNext()) ;
-
+                } while (query.moveToNext());
             }
             query.close();
-            return result;
         }
+        return result;
+    }
 
 
     private String getMmsText(Context context, String id)
@@ -245,19 +194,21 @@ public class ContactManager {
                 addrSelection, null, null);
         String address = "";
         String val;
-        if (cursor.moveToFirst()) {
-            do {
-                val = cursor.getString(cursor.getColumnIndex("address"));
-                if (val != null) {
-                    address = val;
-                    // Use the first one found if more than one
-                    break;
-                }
-            } while (cursor.moveToNext());
-        }
-        if (cursor != null) {
+        if(cursor != null && cursor.getCount()>0) {
+            if (cursor.moveToFirst()) {
+                do {
+                    val = cursor.getString(cursor.getColumnIndex("address"));
+                    if (val != null) {
+                        address = val;
+                        // Use the first one found if more than one
+                        break;
+                    }
+                } while (cursor.moveToNext());
+            }
             cursor.close();
         }
+
+
         // return address.replaceAll("[^0-9]", "");
         Log.d("MisakaMOE",address);
         Log.d("MisakaMOE_",String.valueOf(id));
