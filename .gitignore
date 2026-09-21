@@ -7,3 +7,9 @@
 /build
 /captures
 .externalNativeBuild
+
+# Local / credential-bearing Android files
+/local.properties
+/app/google-services.json
+*.jks
+*.keystore

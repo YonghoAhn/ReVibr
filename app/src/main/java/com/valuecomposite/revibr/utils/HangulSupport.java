@@ -1,4 +1,4 @@
-package com.valuecomposite.revibr;
+package com.valuecomposite.revibr.utils;
 
 /**
  * Created by ayh07 on 8/12/2017.
@@ -94,5 +94,40 @@ public class HangulSupport {
         rt[1] = MiddleSound[c2];
         rt[2] = LastSound[c3];
         return rt;
+    }
+
+    public static String CreateChosungString(String name)
+    {
+        char[] input = name.toCharArray();
+        String result="";
+        for(char c : input) {
+            char rt;
+            int nTmp = c - BASECODE;
+            int c1 = nTmp / CHOSUNG;
+            if(c1>=0 && c1 <= 18) {
+                rt = FirstSound[c1];
+                result += rt;
+            }
+        }
+        return result;
+    }
+
+    public static char[] DivideHangulChar(char hangul)
+    {
+        //char result = ' ';
+        char[] temp = new char[3];
+        if(hangul >= 0xAC00)//한글 유니코드 시작지점
+        {
+            char uniVal = (char)(hangul - 0xAC00);
+            char cho = (char)(((uniVal-(uniVal%28))/28)/21);
+            char jung = (char)(((uniVal-(uniVal%28))/28)%21);
+            char jong = (char)(uniVal%28);
+
+            temp[0] = FirstSound[cho];
+            temp[1] = MiddleSound[jung];
+            temp[2] = LastSound[jong];
+            //result = CombineHangul(temp);
+        }
+        return temp;
     }
 }
