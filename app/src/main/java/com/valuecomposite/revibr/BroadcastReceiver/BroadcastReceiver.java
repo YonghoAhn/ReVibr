@@ -1,20 +1,19 @@
-package com.valuecomposite.revibr;
+package com.valuecomposite.revibr.BroadcastReceiver;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.Date;
+import com.valuecomposite.revibr.Activities.ReceiveActivity;
+import com.valuecomposite.revibr.Services.MMSReceiverService;
+import com.valuecomposite.revibr.utils.DataManager;
+import com.valuecomposite.revibr.utils.PhoneBookItem;
 
-/**
- * Created by ayh07 on 8/10/2017.
- */
+import java.util.Date;
 
 public class BroadcastReceiver extends android.content.BroadcastReceiver {
 
@@ -23,7 +22,7 @@ public class BroadcastReceiver extends android.content.BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Bundle bundle = intent.getExtras();
         String action = intent.getAction();
-        if(action.equals("android.provider.Telephony.SMS_RECEIVED"))
+        if(action.equals("android.provider.Telephony.SMS_RECEIVED") || action.equals("android.provider.Telephony.SMS_DELIVER"))
         {
             Object messages[] = (Object[])bundle.get("pdus");
             SmsMessage smsMessage[] = new SmsMessage[messages.length];
@@ -42,6 +41,7 @@ public class BroadcastReceiver extends android.content.BroadcastReceiver {
             //SMS 수신 번호가 등록된 사람인가?
             String person = "모르는 번호";
 
+
             //SMS 수신 메세지
             String message = smsMessage[0].getMessageBody().toString();
 
@@ -50,21 +50,14 @@ public class BroadcastReceiver extends android.content.BroadcastReceiver {
             DataManager.CurrentSMS.setPhoneNum(number);
             DataManager.CurrentSMS.setTime(time);
             DataManager.CurrentSMS.setDisplayName(person);
-            receiveIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            //receiveIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            receiveIntent.putExtra("IsReceiver",true);
+            receiveIntent.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+            receiveIntent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+
             context.startActivity(receiveIntent);
         }
-        else if(action.equals(Intent.ACTION_HEADSET_PLUG))
-        {
-            int state = intent.getIntExtra("state", -1);
-            if(state == 1) //Earphone attached
-            {
-                DataManager.IsEarphoneConnected = true;
-            }
-            else //Earphone dettached
-            {
-                DataManager.IsEarphoneConnected = false;
-            }
-        }
+
         else if (action.equals("SMS_SENT_ACTION")) {
             switch (getResultCode()) {
                 case Activity.RESULT_OK:
@@ -94,6 +87,10 @@ public class BroadcastReceiver extends android.content.BroadcastReceiver {
                     // 도착 완료
                     Toast.makeText(context, "SMS 도착 완료", Toast.LENGTH_SHORT).show();
                     Intent scActivity = new Intent(context, ReceiveActivity.class);
+                    //scActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    scActivity.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                    scActivity.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+
                     context.startActivity(scActivity);
                     break;
                 case Activity.RESULT_CANCELED:
@@ -101,8 +98,6 @@ public class BroadcastReceiver extends android.content.BroadcastReceiver {
                     Toast.makeText(context, "SMS 도착 실패", Toast.LENGTH_SHORT).show();
                     break;
             }
-        }else{
-
         }
     }
 }
